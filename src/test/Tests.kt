@@ -3,54 +3,45 @@ package test
 import XMLDocument
 import XMLElement
 import XPathEvaluator
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Assertions.*
 
 class XMLTests {
     // Teste para adicionar e remover uma entidade
     @Test
     fun testAddRemoveEntity() {
-        // Criando um elemento pai e um elemento filho
         val parent = XMLElement("parent")
         val child = XMLElement("child")
 
-        // Adicionando o elemento filho ao elemento pai
         parent.addChild(child)
-        assertEquals(1, parent.children.size) // Verificando se o elemento filho foi adicionado corretamente
+        assertEquals(1, parent.children.size)
 
-        // Removendo o elemento filho do elemento pai
         parent.removeChild(child)
-        assertEquals(0, parent.children.size) // Verificando se o elemento filho foi removido corretamente
+        assertEquals(0, parent.children.size)
     }
 
     // Teste para adicionar e remover um atributo
     @Test
     fun testAddRemoveAttribute() {
-        // Criando um elemento
         val element = XMLElement("element")
 
-        // Adicionando um atributo ao elemento
         element.addAttribute("attribute", "value")
-        assertEquals(1, element.attributes.size) // Verificando se o atributo foi adicionado corretamente
+        assertEquals(1, element.attributes.size)
 
-        // Removendo o atributo do elemento
         element.removeAttribute("attribute")
-        assertEquals(0, element.attributes.size) // Verificando se o atributo foi removido corretamente
+        assertEquals(0, element.attributes.size)
     }
 
     // Teste para acessar o pai e os filhos de um elemento
     @Test
     fun testAccessParentAndChildren() {
-        // Criando um elemento pai e dois elementos filhos
         val parent = XMLElement("parent")
         val child1 = XMLElement("child1")
         val child2 = XMLElement("child2")
 
-        // Adicionando os elementos filhos ao elemento pai
         parent.addChild(child1)
         parent.addChild(child2)
 
-        // Verificando se os elementos filhos têm o pai correto e se o elemento pai tem os filhos corretos
         assertEquals(parent, child1.parent)
         assertEquals(parent, child2.parent)
         assertEquals(2, parent.children.size)
@@ -59,41 +50,91 @@ class XMLTests {
     // Teste para verificar o método prettyPrint() de XMLDocument
     @Test
     fun testPrettyPrint() {
-        // Criando uma estrutura XML simples
         val root = XMLElement("root")
         val child = XMLElement("child")
         root.addChild(child)
 
-        // Criando um documento XML e atribuindo a raiz
         val document = XMLDocument()
         document.rootElement = root
 
-        // String esperada após prettyPrint
         val expected = "<root>\n\t<child/>\n</root>"
+        val actual = document.prettyPrint().trim() // Remover espaços em branco extras
 
-        // Verificando se o resultado do prettyPrint é o esperado
-        assertEquals(expected, document.prettyPrint())
+        assertEquals(expected, actual)
     }
 
     // Teste para verificar a avaliação de XPath em um documento XML
     @Test
     fun testXPathEvaluation() {
-        // Criando uma estrutura XML com dois elementos filhos com o mesmo nome
         val root = XMLElement("root")
         val child1 = XMLElement("child")
         val child2 = XMLElement("child")
         root.addChild(child1)
         root.addChild(child2)
 
-        // Criando um documento XML e atribuindo a raiz
         val document = XMLDocument()
         document.rootElement = root
 
-        // Criando um avaliador XPath e avaliando a expressão XPath
         val evaluator = XPathEvaluator(document)
         val result = evaluator.evaluate("root/child")
 
-        // Verificando se a quantidade de elementos encontrados é a esperada
         assertEquals(2, result.size)
+    }
+
+    // Teste para verificar a avaliação de XPath em um documento XML com um único elemento filho
+    @Test
+    fun testXPathEvaluationSingleChild() {
+        val root = XMLElement("root")
+        val child = XMLElement("child")
+        root.addChild(child)
+
+        val document = XMLDocument()
+        document.rootElement = root
+
+        val evaluator = XPathEvaluator(document)
+        val result = evaluator.evaluate("root/child")
+
+        assertEquals(1, result.size)
+    }
+
+    // Teste para verificar a avaliação de XPath em um documento XML com atributos
+    @Test
+    fun testXPathEvaluationWithAttributes() {
+        val root = XMLElement("root")
+        val child = XMLElement("child")
+        child.addAttribute("attribute1", "value1")
+        child.addAttribute("attribute2", "value2")
+        root.addChild(child)
+
+        val document = XMLDocument()
+        document.rootElement = root
+
+        val evaluator = XPathEvaluator(document)
+        val result = evaluator.evaluate("root/child")
+
+        assertEquals(1, result.size)
+        assertEquals(2, result[0].attributes.size)
+        assertEquals("value1", result[0].attributes[0].value)
+        assertEquals("attribute1", result[0].attributes[0].name)
+        assertEquals("value2", result[0].attributes[1].value)
+        assertEquals("attribute2", result[0].attributes[1].name)
+    }
+
+    // Teste para verificar a avaliação de XPath com vários níveis de filhos
+    @Test
+    fun testXPathEvaluationMultipleLevels() {
+        val parent = XMLElement("parent")
+        val child1 = XMLElement("child1")
+        val child2 = XMLElement("child2")
+        child1.addChild(child2)
+        parent.addChild(child1)
+
+        val document = XMLDocument()
+        document.rootElement = parent
+
+        val evaluator = XPathEvaluator(document)
+        val result = evaluator.evaluate("parent/child1/child2")
+
+        assertEquals(1, result.size)
     }
 }
