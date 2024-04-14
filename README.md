@@ -25,3 +25,35 @@ Contribuições são bem-vindas! Sinta-se à vontade para abrir issues relatando
 ## Autor
 
 Este projeto foi desenvolvido por @triplom e está sob a licença ...
+
+## Explicações para cada etapa do código:
+
+1. **`XMLElement` e `XMLDocument`**: Definem as classes que representam elementos XML e documentos XML, respectivamente, junto com suas funcionalidades.
+
+2. **`XMLAttribute`**: Representa um atributo XML com um nome e um valor.
+
+3. **Funções em `XMLElement`**:
+   - `addAttribute`: Adiciona um novo atributo ao elemento.
+   - `removeAttribute`: Remove um atributo existente do elemento.
+   - `addChild`: Adiciona um novo elemento filho ao elemento atual.
+   - `removeChild`: Remove um elemento filho existente do elemento atual.
+   - `rename`: Renomeia o elemento.
+   - `accept`: Aceita um visitante XML para permitir visitação do elemento e seus filhos.
+   - `prettyPrint`: Gera uma representação em formato legível do elemento e seus filhos.
+
+4. **Funções em `XMLDocument`**:
+   - `prettyPrint`: Gera uma representação em formato legível do documento XML.
+   - `writeToFile`: Escreve o documento XML em um arquivo (implementação será adicionada posteriormente).
+   - `accept`: Aceita um visitante XML para permitir visitação do documento.
+
+5. **`XMLVisitor`**: Define uma interface para visitantes XML.
+
+6. **`XPathEvaluator`**: Avalia expressões XPath em um documento XML.
+
+7. **`main`**: Função principal que demonstra o uso das classes e funções definidas acima:
+   - Cria um documento XML com um elemento raiz e vários elementos filhos.
+   - Renomeia o elemento raiz.
+   - Escreve o documento em um arquivo (a implementação real será adicionada posteriormente).
+   - Adiciona atributos aos elementos.
+   - Visita os elementos do documento usando um visitante XML.
+   - Imprime o documento XML de forma bonita.
