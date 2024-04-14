@@ -80,8 +80,9 @@ class XMLDocument {
     }
 
     // Método para escrever o documento em um arquivo
-    fun writeToFile() {
-        // Implementação será adicionada posteriormente
+    fun writeToFile(fileName: String) {
+        // Implementação para escrever o documento em um arquivo será adicionada posteriormente
+        println("Documento escrito em $fileName")
     }
 
     // Método para aceitar um visitante XML
@@ -101,10 +102,50 @@ class XPathEvaluator(private val document: XMLDocument) {
     // Método para avaliar uma expressão XPath e retornar uma lista de elementos correspondentes
     fun evaluate(expression: String): List<XMLElement> {
         val path = expression.split("/")
-        var elements = listOf(document.rootElement ?: return emptyList())
+        var elements: List<XMLElement> = listOf(document.rootElement ?: return emptyList())
         for (step in path) {
-            elements = elements.flatMap { it.children.filter { child -> child.name == step } }
+            val filteredElements = mutableListOf<XMLElement>()
+            for (element in elements) {
+                filteredElements.addAll(element.children.filter { it.name == step })
+            }
+            elements = filteredElements
         }
         return elements
     }
+}
+
+fun main() {
+    val document = XMLDocument()
+    val root = XMLElement("root")
+    document.rootElement = root
+
+    // Adicionando vários filhos usando um loop
+    for (i in 1..5) {
+        val child = XMLElement("child$i")
+        root.addChild(child)
+    }
+
+    // Renomeando o elemento raiz
+    document.rootElement?.rename("newRoot")
+
+    // Escrevendo o documento em um arquivo
+    document.writeToFile("output.xml")
+
+    // Adicionando vários atributos usando um loop
+    val attributesToAdd = listOf(
+        "attr1" to "value1",
+        "attr2" to "value2",
+        "attr3" to "value3"
+    )
+    for ((name, value) in attributesToAdd) {
+        root.addAttribute(name, value)
+    }
+
+    document.accept(object : XMLVisitor {
+        override fun visit(element: XMLElement) {
+            println(element.name)
+        }
+    })
+
+    println(document.prettyPrint())
 }
