@@ -64,7 +64,29 @@ class XMLElement(var name: String) {
 
         return result.toString() // Retornando a string de saída
     }
+
+    fun findAncestry():MutableList<XMLElement>{
+        val listAncestry = mutableListOf<XMLElement>()
+        if (this.parent != null){
+            listAncestry.add(this.parent!!)
+            listAncestry.addAll(this.parent!!.findAncestry())
+        }
+        return listAncestry
+    }
+
+    fun findDescendants(): MutableList<XMLElement>{
+        val listDescendants = mutableListOf<XMLElement>()
+        this.children.forEach {
+            listDescendants.add(it)
+            listDescendants.addAll(it.findDescendants())
+        }
+
+        return listDescendants
+    }
+
 }
+
+
 
 // Classe que representa um documento XML
 class XMLDocument {

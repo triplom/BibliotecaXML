@@ -7,30 +7,87 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 
 class XMLTests {
+
+    // Test to add attribute
+    @Test
+    fun testAddAttribute() {
+        val element = XMLElement("element")
+
+        element.addAttribute("attribute", "value")
+        assertEquals(1, element.attributes.size)
+    }
+
+    // Test to remove attribute
+    @Test
+    fun testRemoveAttribute(){
+        val element = XMLElement("element")
+        element.addAttribute("attribute", "value")
+        element.removeAttribute("attribute")
+        assertEquals(0, element.attributes.size)
+    }
+
+
     // Teste para adicionar e remover uma entidade
     @Test
-    fun testAddRemoveEntity() {
+    fun testAddEntity() {
         val parent = XMLElement("parent")
         val child = XMLElement("child")
 
         parent.addChild(child)
         assertEquals(1, parent.children.size)
+    }
+
+    // Teste para adicionar e remover uma entidade
+    @Test
+    fun testRemoveEntity() {
+        val parent = XMLElement("parent")
+        val child = XMLElement("child")
+
+        parent.addChild(child)
 
         parent.removeChild(child)
         assertEquals(0, parent.children.size)
     }
 
-    // Teste para adicionar e remover um atributo
     @Test
-    fun testAddRemoveAttribute() {
-        val element = XMLElement("element")
+    fun testFindAncestry(){
+        val parent = XMLElement("parent")
+        val child1 = XMLElement("child1")
+        val child2 = XMLElement("child2")
 
-        element.addAttribute("attribute", "value")
-        assertEquals(1, element.attributes.size)
+        parent.addChild(child1)
+        parent.addChild(child2)
 
-        element.removeAttribute("attribute")
-        assertEquals(0, element.attributes.size)
+        val child3 = XMLElement("child3")
+        val child4 = XMLElement("child4")
+
+        child1.addChild(child3)
+        child3.addChild(child4)
+
+        val testFindAncestryList = mutableListOf<XMLElement>(parent,child1, child3)
+        assertEquals(testFindAncestryList.asReversed(), child4.findAncestry())
+
     }
+
+    @Test
+    fun testFindDescendants(){
+        val parent = XMLElement("parent")
+        val child1 = XMLElement("child1")
+        val child2 = XMLElement("child2")
+
+        parent.addChild(child1)
+        parent.addChild(child2)
+
+        val child3 = XMLElement("child3")
+        val child4 = XMLElement("child4")
+
+        child1.addChild(child3)
+        child3.addChild(child4)
+
+        val testFindDescendantsList = mutableListOf<XMLElement>(child1, child3, child4, child2)
+        assertEquals(testFindDescendantsList, parent.findDescendants())
+    }
+
 
     // Teste para acessar o pai e os filhos de um elemento
     @Test
