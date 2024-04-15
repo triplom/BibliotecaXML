@@ -10,14 +10,11 @@ class XMLElement(var name: String) {
     val children = mutableListOf<XMLElement>()
 
     // Referência ao elemento pai
-    private var parent: XMLElement? = null
+    var parent: XMLElement? = null
 
-    fun hasAttribute(attribute:String): Boolean{
-        attributes.forEach {
-            if (it.name == attribute)
-                return true
-        }
-        return false
+    // Método para verificar se o elemento possui um determinado atributo
+    fun hasAttribute(attribute: String): Boolean {
+        return attributes.any { it.name == attribute }
     }
 
     // Método para adicionar um atributo ao elemento
@@ -61,37 +58,68 @@ class XMLElement(var name: String) {
 
         // Adicionando a tag de abertura do elemento com seus atributos
         result.append("$indent<$name")
-        attributes.forEach { result.append(" ${it.name}=\"${it.value}\"") }
-        if (children.size > 0){
-            result.append(">\n")
-            // Imprimindo os elementos filhos de forma recursiva
-            children.forEach { result.append(it.prettyPrint(depth + 1)) }
-            // Adicionando a tag de fechamento do elemento
+        if (attributes.isNotEmpty()) {
+            attributes.forEach { result.append(" ${it.name}=\"${it.value}\"") }
+            result.append(">")
+        } else {
+            result.append("/>")
+        }
+
+        // Adicionando uma quebra de linha
+        result.append("\n")
+
+        // Imprimindo os elementos filhos de forma recursiva
+        children.forEach { result.append(it.prettyPrint(depth + 1)) }
+
+        // Adicionando a tag de fechamento do elemento, se necessário
+        if (children.isNotEmpty()) {
             result.append("$indent</$name>\n")
-        }else{
-            result.append("/>\n")
         }
 
         return result.toString() // Retornando a string de saída
     }
 
-    fun findAncestry():MutableList<XMLElement>{
+    // Método para encontrar a ascendência do elemento
+    fun findAncestry(): List<XMLElement> {
         val listAncestry = mutableListOf<XMLElement>()
-        if (this.parent != null){
-            listAncestry.add(this.parent!!)
-            listAncestry.addAll(this.parent!!.findAncestry())
+        var currentElement: XMLElement? = this.parent
+        while (currentElement != null) {
+            listAncestry.add(currentElement)
+            currentElement = currentElement.parent
         }
-        return listAncestry
+        return listAncestry.reversed() // Revertendo a lista para ter a ordem correta
     }
 
-    fun findDescendants(): MutableList<XMLElement>{
+    // Método para encontrar os descendentes do elemento
+    fun findDescendants(): List<XMLElement> {
         val listDescendants = mutableListOf<XMLElement>()
-        this.children.forEach {
+        children.forEach {
             listDescendants.add(it)
             listDescendants.addAll(it.findDescendants())
         }
-
         return listDescendants
+    }
+
+    // Sobrescrevendo o método equals para comparar elementos XML
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as XMLElement
+
+        if (name != other.name) return false
+        if (attributes != other.attributes) return false
+        if (children != other.children) return false
+
+        return true
+    }
+
+    // Sobrescrevendo o método hashCode para garantir consistência com equals
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + attributes.hashCode()
+        result = 31 * result + children.hashCode()
+        return result
     }
 
 }
@@ -120,41 +148,45 @@ class XMLDocument {
         rootElement?.accept(visitor)
     }
 
-    fun addAttributesGlobal(nameEntity: String, nameAttributeEntity:String, valueAttributeEntity: String){
+    // Método para adicionar atributos globalmente a todos os elementos filhos de um elemento específico
+    fun addAttributesGlobal(nameEntity: String, nameAttributeEntity: String, valueAttributeEntity: String) {
         val listChildrenDescendants = rootElement?.findDescendants()
         listChildrenDescendants?.forEach {
             if (it.name == nameEntity)
-                it.addAttribute(nameAttributeEntity,valueAttributeEntity)
+                it.addAttribute(nameAttributeEntity, valueAttributeEntity)
         }
     }
 
-    private fun getIndexOfElement(nameAttribute: String, listAttributes:MutableList<XMLAttribute>): Int{
-        listAttributes.forEach {
-            if (it.name == nameAttribute)
-                 return listAttributes.indexOf(it)
+    // Método auxiliar para obter o índice de um atributo
+    private fun getIndexOfElement(nameAttribute: String, listAttributes: MutableList<XMLAttribute>): Int {
+        listAttributes.forEachIndexed { index, attribute ->
+            if (attribute.name == nameAttribute)
+                return index
         }
-        return 0
+        return -1
     }
-    fun renameAttributesGlobal(nameEntity:String, oldName:String, newName:String){
+
+    // Método para renomear atributos globalmente em todos os elementos filhos de um elemento específico
+    fun renameAttributesGlobal(nameEntity: String, oldName: String, newName: String) {
         val listChildrenDescendants = rootElement?.findDescendants()
-        listChildrenDescendants?.forEach {
-            if (it.name == nameEntity && it.hasAttribute(oldName)){
-                val indexAttribute = getIndexOfElement(oldName, it.attributes)
-                val attributeToChange = it.attributes.elementAt(indexAttribute)
-                attributeToChange.name = newName
+        listChildrenDescendants?.forEach { element ->
+            if (element.name == nameEntity && element.hasAttribute(oldName)) {
+                val indexAttribute = getIndexOfElement(oldName, element.attributes)
+                if (indexAttribute != -1) {
+                    element.attributes[indexAttribute].name = newName
+                }
             }
         }
     }
 
-    fun renameEntitiesGlobal(oldNameEntity: String, newNameEntity:String){
+    // Método para renomear entidades globalmente em todos os elementos filhos de um elemento específico
+    fun renameEntitiesGlobal(oldNameEntity: String, newNameEntity: String) {
         val listOfChildrenDescendants = rootElement?.findDescendants()
         listOfChildrenDescendants?.forEach {
             if (it.name == oldNameEntity)
                 it.name = newNameEntity
         }
-
     }
-
 }
 
 // Interface para visitantes XML
@@ -163,23 +195,35 @@ interface XMLVisitor {
     fun visit(element: XMLElement)
 }
 
-// Classe que avalia expressões XPath em um documento XML
 class XPathEvaluator(private val document: XMLDocument) {
     // Método para avaliar uma expressão XPath e retornar uma lista de elementos correspondentes
     fun evaluate(expression: String): List<XMLElement> {
         val path = expression.split("/")
-        var elements: List<XMLElement> = listOf(document.rootElement ?: return emptyList())
+        var elements = listOf(document.rootElement ?: return emptyList())
+
         for (step in path) {
             val filteredElements = mutableListOf<XMLElement>()
             for (element in elements) {
-                filteredElements.addAll(element.children.filter { it.name == step })
+                // Se o passo atual for '.', isso significa que estamos nos referindo ao elemento atual.
+                // Portanto, adicionamos o próprio elemento à lista filtrada.
+                if (step == ".") {
+                    filteredElements.add(element)
+                } else {
+                    // Para os outros passos, iteramos sobre todos os FILHOS do elemento atual
+                    // e verificamos se o nome do FILHO corresponde ao passo atual.
+                    element.children.forEach { child ->
+                        if (child.name == step) {
+                            filteredElements.add(child)
+                        }
+                    }
+                }
             }
+            // Atualizamos a lista acumulativa de elementos
             elements = filteredElements
         }
         return elements
     }
 }
-
 fun main() {
     val document = XMLDocument()
     val root = XMLElement("root")
