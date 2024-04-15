@@ -54,13 +54,15 @@ class XMLElement(var name: String) {
         // Adicionando a tag de abertura do elemento com seus atributos
         result.append("$indent<$name")
         attributes.forEach { result.append(" ${it.name}=\"${it.value}\"") }
-        result.append(">\n")
-
-        // Imprimindo os elementos filhos de forma recursiva
-        children.forEach { result.append(it.prettyPrint(depth + 1)) }
-
-        // Adicionando a tag de fechamento do elemento
-        result.append("$indent</$name>\n")
+        if (children.size > 0){
+            result.append(">\n")
+            // Imprimindo os elementos filhos de forma recursiva
+            children.forEach { result.append(it.prettyPrint(depth + 1)) }
+            // Adicionando a tag de fechamento do elemento
+            result.append("$indent</$name>\n")
+        }else{
+            result.append("/>\n")
+        }
 
         return result.toString() // Retornando a string de saída
     }

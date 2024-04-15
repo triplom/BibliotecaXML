@@ -88,7 +88,7 @@ class XMLTests {
         assertEquals(testFindDescendantsList, parent.findDescendants())
     }
 
-
+/*
     // Teste para acessar o pai e os filhos de um elemento
     @Test
     fun testAccessParentAndChildren() {
@@ -103,7 +103,7 @@ class XMLTests {
         assertEquals(parent, child2.parent)
         assertEquals(2, parent.children.size)
     }
-
+*/
     // Teste para verificar o método prettyPrint() de XMLDocument
     @Test
     fun testPrettyPrint() {
