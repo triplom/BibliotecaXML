@@ -1,5 +1,5 @@
 // Classe que representa um atributo XML com um nome e um valor
-data class XMLAttribute(val name: String, val value: String)
+data class XMLAttribute(var name: String, var value: String)
 
 // Classe que representa um elemento XML
 class XMLElement(var name: String) {
@@ -128,13 +128,31 @@ class XMLDocument {
         }
     }
 
-    fun renameAttributesGlobal(oldName:String, newName:String){
+    private fun getIndexOfElement(nameAttribute: String, listAttributes:MutableList<XMLAttribute>): Int{
+        listAttributes.forEach {
+            if (it.name == nameAttribute)
+                 return listAttributes.indexOf(it)
+        }
+        return 0
+    }
+    fun renameAttributesGlobal(nameEntity:String, oldName:String, newName:String){
         val listChildrenDescendants = rootElement?.findDescendants()
         listChildrenDescendants?.forEach {
-            if (it.hasAttribute(oldName)){
-
+            if (it.name == nameEntity && it.hasAttribute(oldName)){
+                val indexAttribute = getIndexOfElement(oldName, it.attributes)
+                var attributeToChange = it.attributes.elementAt(indexAttribute)
+                attributeToChange.name = newName
             }
         }
+    }
+
+    fun renameEntitiesGlobal(oldNameEntity: String, newNameEntity:String){
+        val listOfChildrenDescendants = rootElement?.findDescendants()
+        listOfChildrenDescendants?.forEach {
+            if (it.name == oldNameEntity)
+                it.name = newNameEntity
+        }
+
     }
 
 }

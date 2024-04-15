@@ -163,6 +163,50 @@ class XMLTests {
 
     }
 
+    @Test
+    fun testRenameAttributeGlobal(){
+        val root = XMLElement("root")
+        val child = XMLElement("child")
+        root.addChild(child)
+
+        val document = XMLDocument()
+        document.rootElement = root
+        child.addAttribute("Test", "Hello")
+        val child2 = XMLElement("child")
+        child.addChild(child2)
+
+        document.addAttributesGlobal("child","Mais um test","HelloWorld")
+
+        assertEquals(true, child.hasAttribute("Mais um test"))
+
+        document.renameAttributesGlobal("child","Mais um test", "Test2")
+        assertEquals(true, child2.hasAttribute("Test2"))
+        assertEquals(true, child.hasAttribute("Test2"))
+
+
+        assertEquals(false, child.hasAttribute("Mais um test"))
+    }
+
+    @Test
+    fun testRenameEntityGlobal(){
+        val root = XMLElement("root")
+        val child = XMLElement("child")
+        root.addChild(child)
+
+        val document = XMLDocument()
+        document.rootElement = root
+        child.addAttribute("Teste", "Hello")
+        val child2 = XMLElement("child")
+        child.addChild(child2)
+
+
+        document.renameEntitiesGlobal("child", "Batata")
+
+        assertEquals(true, child2.name == "Batata")
+        assertEquals(true, child.name =="Batata")
+        assertEquals(false, child.name =="child")
+    }
+
     // Teste para verificar a avaliação de XPath em um documento XML
     @Test
     fun testXPathEvaluation() {
