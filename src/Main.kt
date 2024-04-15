@@ -12,6 +12,14 @@ class XMLElement(var name: String) {
     // Referência ao elemento pai
     var parent: XMLElement? = null
 
+    fun hasAttribute(attribute:String): Boolean{
+        attributes.forEach {
+            if (it.name == attribute)
+                return true
+        }
+        return false
+    }
+
     // Método para adicionar um atributo ao elemento
     fun addAttribute(name: String, value: String) {
         attributes.add(XMLAttribute(name, value))
@@ -88,8 +96,6 @@ class XMLElement(var name: String) {
 
 }
 
-
-
 // Classe que representa um documento XML
 class XMLDocument {
     // Elemento raiz do documento
@@ -113,6 +119,24 @@ class XMLDocument {
     fun accept(visitor: XMLVisitor) {
         rootElement?.accept(visitor)
     }
+
+    fun addAttributesGlobal(nameEntity: String, nameAttributeEntity:String, valueAttributeEntity: String){
+        val list_childrenDescendants = rootElement?.findDescendants()
+        list_childrenDescendants?.forEach {
+            if (it.name == nameEntity)
+                it.addAttribute(nameAttributeEntity,valueAttributeEntity)
+        }
+    }
+
+    fun renameAttributesGlobal(oldName:String, newName:String){
+        val listChildrenDescendants = rootElement?.findDescendants()
+        listChildrenDescendants?.forEach {
+            if (it.hasAttribute(oldName)){
+
+            }
+        }
+    }
+
 }
 
 // Interface para visitantes XML

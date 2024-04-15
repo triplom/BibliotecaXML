@@ -118,6 +118,49 @@ class XMLTests {
         val actual = document.prettyPrint().trim() // Remover espaços em branco extras
 
         assertEquals(expected, actual)
+
+
+        val child2 = XMLElement("child2")
+        child.addChild(child2)
+        val expectedwithDescendants = "<root>\n\t<child>\n\t\t<child2/>" +
+                "\n\t</child>\n</root>"
+
+        assertEquals(expectedwithDescendants, document.prettyPrint().trim())
+    }
+
+    @Test
+    fun testHasAttribute(){
+        val root = XMLElement("root")
+        val child = XMLElement("child")
+        root.addChild(child)
+
+        val document = XMLDocument()
+        document.rootElement = root
+        child.addAttribute("Teste", "Hello")
+        assertEquals(true, child.hasAttribute("Teste"))
+
+        assertEquals(false, child.hasAttribute("Mais um teste"))
+    }
+
+    @Test
+    fun testAddAttributeGlobally(){
+        val root = XMLElement("root")
+        val child = XMLElement("child")
+        root.addChild(child)
+
+        val document = XMLDocument()
+        document.rootElement = root
+        child.addAttribute("Teste", "Hello")
+        val child2 = XMLElement("child")
+        child.addChild(child2)
+
+        document.addAttributesGlobal("child","Mais um teste","HelloWorld")
+        assertEquals(true, child.hasAttribute("Mais um teste"))
+        assertEquals(true, child2.hasAttribute("Mais um teste"))
+
+
+        assertEquals(false, child2.hasAttribute("Alguém pediu um teste?"))
+
     }
 
     // Teste para verificar a avaliação de XPath em um documento XML
