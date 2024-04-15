@@ -10,7 +10,7 @@ class XMLElement(var name: String) {
     val children = mutableListOf<XMLElement>()
 
     // Referência ao elemento pai
-    var parent: XMLElement? = null
+    private var parent: XMLElement? = null
 
     fun hasAttribute(attribute:String): Boolean{
         attributes.forEach {
@@ -121,8 +121,8 @@ class XMLDocument {
     }
 
     fun addAttributesGlobal(nameEntity: String, nameAttributeEntity:String, valueAttributeEntity: String){
-        val list_childrenDescendants = rootElement?.findDescendants()
-        list_childrenDescendants?.forEach {
+        val listChildrenDescendants = rootElement?.findDescendants()
+        listChildrenDescendants?.forEach {
             if (it.name == nameEntity)
                 it.addAttribute(nameAttributeEntity,valueAttributeEntity)
         }
@@ -140,7 +140,7 @@ class XMLDocument {
         listChildrenDescendants?.forEach {
             if (it.name == nameEntity && it.hasAttribute(oldName)){
                 val indexAttribute = getIndexOfElement(oldName, it.attributes)
-                var attributeToChange = it.attributes.elementAt(indexAttribute)
+                val attributeToChange = it.attributes.elementAt(indexAttribute)
                 attributeToChange.name = newName
             }
         }
