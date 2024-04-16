@@ -128,17 +128,21 @@ class XMLTests {
         // Criando um documento com um elemento raiz "root" e cinco elementos filhos "child1" a "child5"
         val document = XMLDocument()
         val root = XMLElement("root")
+        val child = XMLElement("child")
         document.rootElement = root
+        root.addChild(child)
         for (i in 1..5) {
-            val child = XMLElement("child$i")
-            root.addChild(child)
+            val secondLayerChild = XMLElement("child$i")
+            child.addChild(secondLayerChild)
         }
 
         // Avaliando a expressão XPath "root/child" no documento
         val evaluator = XPathEvaluator(document)
         val result = evaluator.evaluate("root/child")
 
+        assertEquals("<child1/>\n<child2/>\n<child3/>\n<child4/>\n<child5/>\n", result)
+
         // Verificando se o resultado possui exatamente 5 elementos, pois esperamos encontrar os cinco filhos de "root"
-        assertEquals(5, result.size)
+        //assertEquals(5, result.size)
     }
 }

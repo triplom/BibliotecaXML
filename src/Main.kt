@@ -1,3 +1,5 @@
+import javax.xml.xpath.XPath
+
 // Classe que representa um atributo XML com um nome e um valor
 data class XMLAttribute(var name: String, var value: String)
 
@@ -10,7 +12,7 @@ class XMLElement(var name: String) {
     val children = mutableListOf<XMLElement>()
 
     // Referência ao elemento pai
-    var parent: XMLElement? = null
+    private var parent: XMLElement? = null
 
     // Método para verificar se o elemento possui um determinado atributo
     fun hasAttribute(attribute: String): Boolean {
@@ -197,31 +199,33 @@ interface XMLVisitor {
 
 class XPathEvaluator(private val document: XMLDocument) {
     // Método para avaliar uma expressão XPath e retornar uma lista de elementos correspondentes
-    fun evaluate(expression: String): List<XMLElement> {
+    fun evaluate(expression: String):String/*List<XMLElement>*/ {
         val path = expression.split("/")
-        var elements = listOf(document.rootElement ?: return emptyList())
+        var xPathEvaluatorString: String = ""
+        var listXPathCompleted = mutableListOf<XMLElement>()
+        var listTemp = mutableListOf(document.rootElement!!)
 
-        for (step in path) {
-            val filteredElements = mutableListOf<XMLElement>()
-            for (element in elements) {
-                // Se o passo atual for '.', isso significa que estamos nos referindo ao elemento atual.
-                // Portanto, adicionamos o próprio elemento à lista filtrada.
-                if (step == ".") {
-                    filteredElements.add(element)
-                } else {
-                    // Para os outros passos, iteramos sobre todos os FILHOS do elemento atual
-                    // e verificamos se o nome do FILHO corresponde ao passo atual.
-                    element.children.forEach { child ->
-                        if (child.name == step) {
-                            filteredElements.add(child)
-                        }
-                    }
-                }
+
+        fun aux(tagname:String, listXPath: MutableList<XMLElement>): MutableList<XMLElement> {
+            var listTempAuxFun = listXPath.toMutableList()
+            listXPath.forEach {
+                if (it.name == tagname)
+                    listTempAuxFun.addAll(it.children)
+                listTempAuxFun.remove(it)
             }
-            // Atualizamos a lista acumulativa de elementos
-            elements = filteredElements
+            return listTempAuxFun
         }
-        return elements
+
+        for (step in path){
+           listXPathCompleted = aux(step, listTemp)
+           listTemp = listXPathCompleted.toMutableList()
+        }
+
+       listXPathCompleted.forEach {
+           xPathEvaluatorString = xPathEvaluatorString+it.prettyPrint()
+       }
+
+        return xPathEvaluatorString
     }
 }
 fun main() {
