@@ -1,7 +1,6 @@
-import javax.xml.xpath.XPath
-
 // Classe que representa um atributo XML com um nome e um valor
 data class XMLAttribute(var name: String, var value: String)
+// Blindar os atributos  - Garantir que não nulo, case insetive, caracter especial, etc
 
 // Classe que representa um elemento XML
 class XMLElement(var name: String) {
@@ -44,6 +43,8 @@ class XMLElement(var name: String) {
     fun rename(newName: String) {
         this.name = newName
     }
+
+    // Usar o visitor para varrimento ao inves do find children
 
     // Método para aceitar um visitante XML
     fun accept(visitor: XMLVisitor) {
@@ -199,14 +200,14 @@ interface XMLVisitor {
 
 class XPathEvaluator(private val document: XMLDocument) {
     // Método para avaliar uma expressão XPath e retornar uma lista de elementos correspondentes
-    fun evaluate(expression: String):String/*List<XMLElement>*/ {
+    fun evaluate(expression: String): String/*List<XMLElement>*/ {
         val path = expression.split("/")
         var xPathEvaluatorString: String = ""
         var listXPathCompleted = mutableListOf<XMLElement>()
         var listTemp = mutableListOf(document.rootElement!!)
 
 
-        fun aux(tagname:String, listXPath: MutableList<XMLElement>): MutableList<XMLElement> {
+        fun aux(tagname: String, listXPath: MutableList<XMLElement>): MutableList<XMLElement> {
             var listTempAuxFun = listXPath.toMutableList()
             listXPath.forEach {
                 if (it.name == tagname)
@@ -216,18 +217,19 @@ class XPathEvaluator(private val document: XMLDocument) {
             return listTempAuxFun
         }
 
-        for (step in path){
-           listXPathCompleted = aux(step, listTemp)
-           listTemp = listXPathCompleted.toMutableList()
+        for (step in path) {
+            listXPathCompleted = aux(step, listTemp)
+            listTemp = listXPathCompleted.toMutableList()
         }
 
-       listXPathCompleted.forEach {
-           xPathEvaluatorString = xPathEvaluatorString+it.prettyPrint()
-       }
+        listXPathCompleted.forEach {
+            xPathEvaluatorString = xPathEvaluatorString + it.prettyPrint()
+        }
 
         return xPathEvaluatorString
     }
 }
+
 fun main() {
     val document = XMLDocument()
     val root = XMLElement("root")
