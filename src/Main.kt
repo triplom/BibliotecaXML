@@ -1,7 +1,7 @@
 // Classe que representa um atributo XML com um nome e um valor
 data class XMLAttribute(var name: String, var value: String)
 // Blindar os atributos  - Garantir que não nulo, case insetive, caracter especial, etc
-
+// Marcel
 // Classe que representa um elemento XML
 class XMLElement(var name: String) {
     // Lista de atributos do elemento
