@@ -1,8 +1,61 @@
-// Classe que representa um atributo XML com um nome e um valor
-data class XMLAttribute(var name: String, var value: String)
-// Blindar os atributos  - Garantir que não nulo, case insetive, caracter especial, etc
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.findAnnotation
 
-// Classe que representa um elemento XML
+// Anotação para personalizar a tradução para XML
+@Target(AnnotationTarget.PROPERTY)
+annotation class XMLProperty(val name: String, val type: XMLType = XMLType.ATTRIBUTE, val ignore: Boolean = false)
+
+enum class XMLType {
+    ATTRIBUTE, ENTITY
+}
+
+// Função para converter um objeto em XML
+fun objectToXML(obj: Any): XMLElement {
+    val clazz = obj::class
+
+    // Obtendo o nome da classe para criar o elemento XML
+    val xmlElement = XMLElement(clazz.simpleName ?: "unknown")
+
+    // Iterando sobre as propriedades da classe
+    clazz.declaredMemberProperties.forEach { prop ->
+        // Verificando se a propriedade está anotada com XMLProperty
+        val annotation = prop.findAnnotation<XMLProperty>()
+
+        if (annotation != null) {
+            // Obtendo o nome personalizado para a propriedade no XML
+            val propertyName = annotation.name
+
+            // Verificando se a propriedade deve ser ignorada
+            if (!annotation.ignore) {
+                val value = prop.get(obj)
+
+                // Verificando o tipo de tradução (atributo ou entidade)
+                when (annotation.type) {
+                    XMLType.ATTRIBUTE -> {
+                        // Adicionando a propriedade como um atributo do elemento XML
+                        xmlElement.addAttribute(propertyName, value.toString())
+                    }
+                    XMLType.ENTITY -> {
+                        // Verificando se o valor da propriedade é um objeto
+                        if (value is Any) {
+                            // Convertendo recursivamente o objeto em XML
+                            val childElement = objectToXML(value)
+                            // Adicionando o elemento filho ao elemento XML
+                            xmlElement.addChild(childElement)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return xmlElement
+}
+
+// Classe para representar um atributo XML com um nome e um valor
+data class XMLAttribute(var name: String, var value: String)
+
+// Classe para representar um elemento XML
 class XMLElement(var name: String) {
     // Lista de atributos do elemento
     val attributes = mutableListOf<XMLAttribute>()
@@ -43,8 +96,6 @@ class XMLElement(var name: String) {
     fun rename(newName: String) {
         this.name = newName
     }
-
-    // Usar o visitor para varrimento ao inves do find children
 
     // Método para aceitar um visitante XML
     fun accept(visitor: XMLVisitor) {
@@ -127,68 +178,60 @@ class XMLElement(var name: String) {
 
 }
 
-// Classe que representa um documento XML
+// Classe representando um documento XML
 class XMLDocument {
     // Elemento raiz do documento
     var rootElement: XMLElement? = null
 
-    // Método para imprimir o documento de forma bonita
-    fun prettyPrint(): String {
-        // Verificando se há um elemento raiz
-        if (rootElement == null) return "" // Retorna uma string vazia se não houver elemento raiz
-        // Chamando o método prettyPrint do elemento raiz para iniciar a impressão
-        return rootElement!!.prettyPrint()
-    }
-
-    // Método para escrever o documento em um arquivo
-    fun writeToFile(fileName: String) {
-        // Implementação para escrever o documento em um arquivo será adicionada posteriormente
-        println("Documento escrito em $fileName")
-    }
-
-    // Método para aceitar um visitante XML
-    fun accept(visitor: XMLVisitor) {
-        rootElement?.accept(visitor)
-    }
-
     // Método para adicionar atributos globalmente a todos os elementos filhos de um elemento específico
     fun addAttributesGlobal(nameEntity: String, nameAttributeEntity: String, valueAttributeEntity: String) {
-        val listChildrenDescendants = rootElement?.findDescendants()
-        listChildrenDescendants?.forEach {
-            if (it.name == nameEntity)
-                it.addAttribute(nameAttributeEntity, valueAttributeEntity)
-        }
-    }
+        // Obtendo a árvore de elementos XML a partir do documento
+        val xmlTree = rootElement?.findDescendants()
 
-    // Método auxiliar para obter o índice de um atributo
-    private fun getIndexOfElement(nameAttribute: String, listAttributes: MutableList<XMLAttribute>): Int {
-        listAttributes.forEachIndexed { index, attribute ->
-            if (attribute.name == nameAttribute)
-                return index
+        // Iterando sobre a árvore de elementos XML
+        xmlTree?.forEach { element ->
+            // Verificando se o elemento possui o nome especificado
+            if (element.name == nameEntity) {
+                // Adicionando o atributo globalmente a todos os elementos filhos
+                element.addAttribute(nameAttributeEntity, valueAttributeEntity)
+            }
         }
-        return -1
     }
 
     // Método para renomear atributos globalmente em todos os elementos filhos de um elemento específico
     fun renameAttributesGlobal(nameEntity: String, oldName: String, newName: String) {
-        val listChildrenDescendants = rootElement?.findDescendants()
-        listChildrenDescendants?.forEach { element ->
-            if (element.name == nameEntity && element.hasAttribute(oldName)) {
-                val indexAttribute = getIndexOfElement(oldName, element.attributes)
-                if (indexAttribute != -1) {
-                    element.attributes[indexAttribute].name = newName
-                }
+        // Obtendo a árvore de elementos XML a partir do documento
+        val xmlTree = rootElement?.findDescendants()
+
+        // Iterando sobre a árvore de elementos XML
+        xmlTree?.forEach { element ->
+            // Verificando se o elemento possui o nome especificado
+            if (element.name == nameEntity) {
+                // Renomeando o atributo em todos os elementos filhos
+                element.renameAttribute(oldName, newName)
             }
         }
     }
 
     // Método para renomear entidades globalmente em todos os elementos filhos de um elemento específico
     fun renameEntitiesGlobal(oldNameEntity: String, newNameEntity: String) {
-        val listOfChildrenDescendants = rootElement?.findDescendants()
-        listOfChildrenDescendants?.forEach {
-            if (it.name == oldNameEntity)
-                it.name = newNameEntity
+        // Obtendo a árvore de elementos XML a partir do documento
+        val xmlTree = rootElement?.findDescendants()
+
+        // Iterando sobre a árvore de elementos XML
+        xmlTree?.forEach { element ->
+            // Verificando se o elemento possui o nome especificado
+            if (element.name == oldNameEntity) {
+                // Renomeando a entidade em todos os elementos filhos
+                element.rename(newNameEntity)
+            }
         }
+    }
+
+    // Método auxiliar para obter o índice de um elemento
+    private fun getIndexOfElement(nameAttribute: String, listAttributes: MutableList<XMLAttribute>) : Int {
+        // Obtendo o índice do elemento com o nome especificado
+        return listAttributes.indexOfFirst { it.name == nameAttribute }
     }
 }
 
@@ -200,15 +243,14 @@ interface XMLVisitor {
 
 class XPathEvaluator(private val document: XMLDocument) {
     // Método para avaliar uma expressão XPath e retornar uma lista de elementos correspondentes
-    fun evaluate(expression: String): String/*List<XMLElement>*/ {
+    fun evaluate(expression: String): String {
         val path = expression.split("/")
-        var xPathEvaluatorString: String = ""
+        var xPathEvaluatorString = ""
         var listXPathCompleted = mutableListOf<XMLElement>()
         var listTemp = mutableListOf(document.rootElement!!)
 
-
         fun aux(tagname: String, listXPath: MutableList<XMLElement>): MutableList<XMLElement> {
-            var listTempAuxFun = listXPath.toMutableList()
+            val listTempAuxFun = listXPath.toMutableList()
             listXPath.forEach {
                 if (it.name == tagname)
                     listTempAuxFun.addAll(it.children)
@@ -223,7 +265,7 @@ class XPathEvaluator(private val document: XMLDocument) {
         }
 
         listXPathCompleted.forEach {
-            xPathEvaluatorString = xPathEvaluatorString + it.prettyPrint()
+            xPathEvaluatorString += it.prettyPrint()
         }
 
         return xPathEvaluatorString
