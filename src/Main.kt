@@ -1,3 +1,5 @@
+
+import java.io.File
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
 
@@ -27,7 +29,7 @@ fun objectToXML(obj: Any): XMLElement {
 
             // Verificando se a propriedade deve ser ignorada
             if (!annotation.ignore) {
-                val value = prop.get(obj)
+                val value = prop.get(obj as Nothing)
 
                 // Verificando o tipo de tradução (atributo ou entidade)
                 when (annotation.type) {
@@ -208,7 +210,7 @@ class XMLDocument {
             // Verificando se o elemento possui o nome especificado
             if (element.name == nameEntity) {
                 // Renomeando o atributo em todos os elementos filhos
-                element.renameAttribute(oldName, newName)
+                element.attributes.find { it.name == oldName }?.name = newName
             }
         }
     }
@@ -233,6 +235,17 @@ class XMLDocument {
         // Obtendo o índice do elemento com o nome especificado
         return listAttributes.indexOfFirst { it.name == nameAttribute }
     }
+
+    // Método para escrever o documento XML em um arquivo
+    fun writeToFile(fileName: String) {
+        val xmlString = rootElement?.prettyPrint() ?: ""
+        File(fileName).writeText(xmlString)
+    }
+
+    // Método para aceitar um visitante XML
+    fun accept(visitor: XMLVisitor) {
+        rootElement?.accept(visitor)
+    }
 }
 
 // Interface para visitantes XML
@@ -249,12 +262,14 @@ class XPathEvaluator(private val document: XMLDocument) {
         var listXPathCompleted = mutableListOf<XMLElement>()
         var listTemp = mutableListOf(document.rootElement!!)
 
+
         fun aux(tagname: String, listXPath: MutableList<XMLElement>): MutableList<XMLElement> {
             val listTempAuxFun = listXPath.toMutableList()
             listXPath.forEach {
-                if (it.name == tagname)
+                if (it.name == tagname) {
                     listTempAuxFun.addAll(it.children)
-                listTempAuxFun.remove(it)
+                    listTempAuxFun.remove(it)
+                }
             }
             return listTempAuxFun
         }
@@ -305,5 +320,5 @@ fun main() {
         }
     })
 
-    println(document.prettyPrint())
+    println(document.rootElement?.prettyPrint())
 }

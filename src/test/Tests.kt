@@ -1,6 +1,10 @@
+
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Assertions.*
+import kotlin.reflect.full.declaredMemberProperties
+import org.junit.jupiter.api.Assertions
+
 
 class XMLTests {
 
@@ -145,5 +149,133 @@ class XMLTests {
 
         // Verificando se o resultado possui exatamente 5 elementos, pois esperamos encontrar os cinco filhos de "root"
         //assertEquals(5, result.size)
+    }
+}
+
+class XMLAnnotationsTest {
+
+    data class Person(
+        @XMLProperty(name = "ID")
+        val id: Int,
+        @XMLProperty(name = "Nome")
+        val name: String,
+        @XMLProperty(name = "Idade", type = XMLType.ATTRIBUTE)
+        val age: Int
+    )
+
+    @Test
+    fun testXMLAnnotations() {
+        val person = Person(1, "John", 30)
+        val xmlElement = objectToXML(person)
+
+        // Verificando se as propriedades foram convertidas corretamente com as anotações
+        Assertions.assertEquals(3, xmlElement.attributes.size)
+
+        // Verificando os nomes e valores dos atributos
+        Assertions.assertEquals("1", xmlElement.attributes.find { it.name == "ID" }?.value)
+        Assertions.assertEquals("John", xmlElement.attributes.find { it.name == "Nome" }?.value)
+        Assertions.assertEquals("30", xmlElement.attributes.find { it.name == "Idade" }?.value)
+
+        // Verificando se a propriedade "age" foi convertida como atributo
+        Assertions.assertEquals(0, xmlElement.children.size)
+    }
+
+    @Test
+    fun testXMLReflection() {
+        data class TestClass(val field1: String, val field2: Int, val field3: Double)
+
+        val properties = TestClass::class.declaredMemberProperties
+        Assertions.assertEquals(3, properties.size)
+        Assertions.assertEquals("field1", properties[0].name)
+        Assertions.assertEquals("field2", properties[1].name)
+        Assertions.assertEquals("field3", properties[2].name)
+    }
+
+    @Test
+    fun testObjectToXML() {
+        data class TestClass(val field1: String, val field2: Int)
+
+        val obj = TestClass("value1", 42)
+        val xmlElement = objectToXML(obj)
+
+        // Verificando se as propriedades foram convertidas corretamente sem anotações
+        Assertions.assertEquals(2, xmlElement.attributes.size)
+
+        // Verificando os nomes e valores dos atributos
+        Assertions.assertEquals("value1", xmlElement.attributes.find { it.name == "field1" }?.value)
+        Assertions.assertEquals("42", xmlElement.attributes.find { it.name == "field2" }?.value)
+    }
+}
+
+class XMLElementTest {
+
+    @Test
+    fun testXMLElement() {
+        val element = XMLElement("person")
+        element.addAttribute("name", "John")
+        element.addAttribute("age", "30")
+        element.addChild(XMLElement("address").apply {
+            addAttribute("city", "New York")
+            addAttribute("zip", "10001")
+        })
+
+        // Testando os métodos de manipulação de atributos
+        assertEquals(2, element.attributes.size)
+        assertEquals(1, element.children.size)
+
+        element.removeAttribute("age")
+        assertEquals(1, element.attributes.size)
+
+        // Testando os métodos de manipulação de elementos filhos
+        element.removeChild(element.children.first())
+        assertEquals(0, element.children.size)
+
+        // Testando o método de renomear
+        element.rename("user")
+        assertEquals("user", element.name)
+    }
+}
+
+class XMLDocumentTest {
+
+    @Test
+    fun testXMLDocument() {
+        val document = XMLDocument()
+        val root = XMLElement("root")
+        document.rootElement = root
+
+        // Adicionando vários filhos usando um loop
+        for (i in 1..5) {
+            val child = XMLElement("child$i")
+            root.addChild(child)
+        }
+
+        // Renomeando o elemento raiz
+        document.rootElement?.rename("newRoot")
+
+        // Escrevendo o documento em um arquivo
+        document.writeToFile("test_output.xml")
+
+        // Adicionando vários atributos usando um loop
+        val attributesToAdd = listOf(
+            "attr1" to "value1",
+            "attr2" to "value2",
+            "attr3" to "value3"
+        )
+        for ((name, value) in attributesToAdd) {
+            root.addAttribute(name, value)
+        }
+
+        // Testando a adição de atributos globalmente
+        document.addAttributesGlobal("newRoot", "globalAttr", "globalValue")
+        assertEquals(4, root.attributes.size)
+
+        // Testando a renomeação de atributos globalmente
+        document.renameAttributesGlobal("newRoot", "attr1", "renamedAttr")
+        assertEquals("renamedAttr", root.attributes.find { it.name == "attr1" }?.name)
+
+        // Testando a renomeação de entidades globalmente
+        document.renameEntitiesGlobal("newRoot", "newElement")
+        assertEquals("newElement", root.name)
     }
 }
