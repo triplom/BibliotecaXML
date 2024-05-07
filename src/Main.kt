@@ -11,6 +11,15 @@ annotation class XmlString(val value: KClass<out XmlStringAdapter<*>>)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class XmlAdapter(val value: KClass<out XmlAdapterBase>)
 
+@Target(AnnotationTarget.PROPERTY)
+annotation class RequiredElement
+
+@Target(AnnotationTarget.VALUE_PARAMETER)
+annotation class AttributeName(val attribute:String )
+
+@Target(AnnotationTarget.CLASS)
+annotation class DBname(val newName:String)
+
 // Interface para adaptadores XML personalizados
 interface XmlAdapterBase {
     fun adapt(element: XMLElement)
