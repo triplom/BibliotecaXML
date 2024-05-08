@@ -63,6 +63,8 @@ enum class XMLType {
     ENTITY,    // Representação como entidade (elemento filho)
     OBJECT     // Representação como objeto aninhado
 }
+// Definição da classe Person para uso no teste
+data class Person(val id: Int, val name: String, val age: Int)
 
 // Função para converter um objeto em XML
 fun Any.toXML(): XMLElement {
