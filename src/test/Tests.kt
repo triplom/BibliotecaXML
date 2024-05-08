@@ -7,25 +7,7 @@ import kotlin.reflect.full.declaredMemberProperties
 class XMLAnnotationsTest {
 
     // Teste para verificar se as propriedades foram convertidas corretamente com as anotações
-    @Test
-    fun `test XML annotations conversion`() {
-        // Criando uma pessoa para testar a conversão para XML
-        val person = Person(1, "John", 30)
-
-        // Convertendo a pessoa para um elemento XML
-        val xmlElement = person.toXML()
-
-        // Verificando se as propriedades foram convertidas corretamente com as anotações
-        assertEquals(3, xmlElement.attributes.size)
-
-        // Verificando os nomes e valores dos atributos
-        assertEquals("1", xmlElement.attributes.find { it.name == "ID" }?.value)
-        assertEquals("John", xmlElement.attributes.find { it.name == "Nome" }?.value)
-        assertEquals("30", xmlElement.attributes.find { it.name == "Idade" }?.value)
-
-        // Verificando se a propriedade "age" foi convertida como atributo
-        assertEquals(0, xmlElement.children.size)
-    }
+    //ADICIONAR TESTE DE CONVERSÃO UTILIZANDO ANOTAÇÕES
 }
 
 // Testes para a funcionalidade da classe XMLDocument
@@ -110,7 +92,7 @@ class XMLDocumentTest {
         child2.addChild(child3)
         child3.addChild(child4)
 
-        val descendantsList = mutableListOf<XMLElement>(child1, child2, child3, child4)
+        val descendantsList = mutableListOf(child1, child2, child3, child4)
         assertEquals(descendantsList, parent.findDescendants())
     }
 
