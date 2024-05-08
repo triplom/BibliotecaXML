@@ -1,15 +1,15 @@
 import java.io.File
-import kotlin.reflect.KClass
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.KClass as KClass1
 
 // Anotação para indicar uma classe que implementa a transformação a ser aplicada à string por padrão
 @Retention(AnnotationRetention.RUNTIME)
-annotation class XmlString(val value: KClass<out XmlStringAdapter<*>>)
+annotation class XmlString(val value: KClass1<out XmlStringAdapter<*>>)
 
 // Anotação para associar um adaptador que realiza alterações na entidade XML após o mapeamento automático
 @Retention(AnnotationRetention.RUNTIME)
-annotation class XmlAdapter(val value: KClass<out XmlAdapterBase>)
+annotation class XmlAdapter(val value: KClass1<out XmlAdapterBase>)
 
 // Interface para adaptadores XML personalizados
 interface XmlAdapterBase {
@@ -31,7 +31,7 @@ class NoOpXmlAdapter : XmlAdapterBase {
 // Implementação padrão de um adaptador de string XML que retorna o valor original
 class NoOpXmlStringAdapter<T> : XmlStringAdapter<T> {
     override fun adapt(value: String): String {
-        return value.toString()
+        return value
     }
 }
 
@@ -64,17 +64,16 @@ enum class XMLType {
     OBJECT     // Representação como objeto aninhado
 }
 
-
 // Função para converter um objeto em XML
-fun objectToXML(obj: Any): XMLElement {
-    val clazz = obj::class
+fun Any.toXML(): XMLElement {
+    val clazz = this::class
 
     // Obtendo o nome da classe para criar o elemento XML
     val xmlElement = XMLElement(clazz.simpleName ?: "unknown")
 
     // Itera sobre as propriedades da classe do objeto
     clazz.declaredMemberProperties.forEach { prop ->
-        val value = prop.call(obj).toString()
+        val value = prop.call(this)?.toString() ?: ""
         val attributeName = prop.name
 
         // Verificando se a propriedade está anotada com XMLProperty
@@ -96,8 +95,9 @@ fun objectToXML(obj: Any): XMLElement {
                         // Verificando se o valor da propriedade é um objeto
                         if (value.isNotEmpty()) {
                             // Convertendo recursivamente o objeto em XML e adicionando-o como entidade
-                            val childElement = objectToXML(value)
-                            xmlElement.addChild(childElement)
+                            val childElement = (prop.call(this) as? Any)?.toXML()
+                            if (childElement != null)
+                                xmlElement.addChild(childElement)
                         }
                     }
                     XMLType.OBJECT -> {
@@ -246,7 +246,6 @@ class XMLElement(var name: String) {
         result = 31 * result + children.hashCode()
         return result
     }
-
 }
 
 // Classe representando um documento XML
@@ -331,7 +330,6 @@ interface XMLVisitor {
     fun visit(element: XMLElement)
 }
 
-@Suppress("UNREACHABLE_CODE")
 class XPathEvaluator(private val document: XMLDocument) {
     // Método para avaliar uma expressão XPath e retornar uma lista de elementos correspondentes
     fun evaluate(expression: String): String {
@@ -349,7 +347,6 @@ class XPathEvaluator(private val document: XMLDocument) {
                 }
             }
             return listTempAuxFun
-            return listXPath.filter {it.name == tagname}.flatMap { it.children }.toMutableList()
         }
 
         for (step in path) {
