@@ -1,15 +1,16 @@
+
 import java.io.File
+import kotlin.reflect.KClass
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
-import kotlin.reflect.KClass as KClass1
 
 // Anotação para indicar uma classe que implementa a transformação a ser aplicada à string por padrão
 @Retention(AnnotationRetention.RUNTIME)
-annotation class XmlString(val value: KClass1<out XmlStringAdapter<*>>)
+annotation class XmlString(val value: KClass<out XmlStringAdapter<*>>)
 
 // Anotação para associar um adaptador que realiza alterações na entidade XML após o mapeamento automático
 @Retention(AnnotationRetention.RUNTIME)
-annotation class XmlAdapter(val value: KClass1<out XmlAdapterBase>)
+annotation class XmlAdapter(val value: KClass<out XmlAdapterBase>)
 
 @Target(AnnotationTarget.PROPERTY)
 annotation class RequiredElement
@@ -72,8 +73,6 @@ enum class XMLType {
     ENTITY,    // Representação como entidade (elemento filho)
     OBJECT     // Representação como objeto aninhado
 }
-// Definição da classe Person para uso no teste
-data class Person(val id: Int, val name: String, val age: Int)
 
 // Função para converter um objeto em XML
 fun Any.toXML(): XMLElement {
@@ -179,6 +178,8 @@ class XMLElement(var name: String) {
         this.name = newName
     }
 
+
+    // UTILIZAR O ACCEPT PARA FAZER O VARRIMENTO E PESQUISA
     // Método para aceitar um visitante XML
     fun accept(visitor: XMLVisitor) {
         // Chamando o método visit do visitante para visitar este elemento
@@ -194,6 +195,7 @@ class XMLElement(var name: String) {
 
         // Adicionando a tag de abertura do elemento com seus atributos
         result.append("$indent<$name")
+        //FALTA CENÁRIO PARA IR ATTRIBUTES.ISNOTEMPTY
         if (attributes.isNotEmpty()) {
             attributes.forEach { result.append(" ${it.name}=\"${it.value}\"") }
             result.append(">")
@@ -208,6 +210,7 @@ class XMLElement(var name: String) {
         children.forEach { result.append(it.prettyPrint(depth + 1)) }
 
         // Adicionando a tag de fechamento do elemento, se necessário
+        //ADICIONAR CASO DE TESTE PARA VER SE O CHILDREN IS NOT EMPTY
         if (children.isNotEmpty()) {
             result.append("$indent</$name>\n")
         }
@@ -236,31 +239,12 @@ class XMLElement(var name: String) {
         return listDescendants
     }
 
-    // Sobrescrevendo o método equals para comparar elementos XML
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as XMLElement
-
-        if (name != other.name) return false
-        if (attributes != other.attributes) return false
-        if (children != other.children) return false
-
-        return true
-    }
-
-    // Sobrescrevendo o método hashCode para garantir consistência com equals
-    override fun hashCode(): Int {
-        var result = name.hashCode()
-        result = 31 * result + attributes.hashCode()
-        result = 31 * result + children.hashCode()
-        return result
-    }
 }
 
 // Classe representando um documento XML
 class XMLDocument {
+
+    //ADICIONAR CASOS DE TESTE PARA VALIDAR TODAS POSSIBILIDADES DE CENÁRIOS
     // Elemento raiz do documento
     var rootElement: XMLElement? = null
 
@@ -371,41 +355,4 @@ class XPathEvaluator(private val document: XMLDocument) {
 
         return xPathEvaluatorString
     }
-}
-
-fun main() {
-    val document = XMLDocument()
-    val root = XMLElement("root")
-    document.rootElement = root
-
-    // Adicionando vários filhos usando um loop
-    for (i in 1..5) {
-        val child = XMLElement("child$i")
-        root.addChild(child)
-    }
-
-    // Renomeando o elemento raiz
-    document.rootElement?.rename("newRoot")
-
-    // Escrevendo o documento em um arquivo
-    document.writeToFile("output.xml")
-
-    // Adicionando vários atributos usando um loop
-    val attributesToAdd = listOf(
-        "attr1" to "value1",
-        "attr2" to "value2",
-        "attr3" to "value3"
-    )
-    for ((name, value) in attributesToAdd) {
-        root.addAttribute(name, value)
-    }
-
-    // Demonstrando visitação de elementos
-    document.accept(object : XMLVisitor {
-        override fun visit(element: XMLElement) {
-            println(element.name)
-        }
-    })
-
-    println(document.rootElement?.prettyPrint())
 }
