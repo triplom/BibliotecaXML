@@ -1,6 +1,8 @@
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import source.XMLElement
+import source.XPathEvaluator
 import kotlin.reflect.full.declaredMemberProperties
 
 // Testes para verificar a funcionalidade das anotações XML
@@ -13,7 +15,7 @@ class XMLAnnotationsTest {
 // Testes para a funcionalidade da classe XMLDocument
 class XMLDocumentTest {
 
-    private lateinit var document: XMLDocument
+    private lateinit var document: source.XMLDocument
 
     // Configuração inicial para cada teste: criamos um documento com um elemento raiz "root" e um elemento filho "child".
     @BeforeEach
@@ -21,7 +23,7 @@ class XMLDocumentTest {
         val root = XMLElement("root")
         val child = XMLElement("child")
         root.addChild(child)
-        document = XMLDocument()
+        document = source.XMLDocument()
         document.rootElement = root
     }
 
@@ -166,7 +168,7 @@ class XMLTests {
     @Test
     fun testXPathEvaluation() {
         // Criando um documento com um elemento raiz "root" e cinco elementos filhos "child1" a "child5"
-        val document = XMLDocument()
+        val document = source.XMLDocument()
         val root = XMLElement("root")
         val child = XMLElement("child")
         document.rootElement = root
