@@ -205,3 +205,4 @@ class XMLReflectionTest {
         assertEquals("field3", properties.elementAt(2).name)
     }
 }
+//adicionar testes aqui
