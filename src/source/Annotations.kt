@@ -6,9 +6,14 @@ import kotlin.reflect.KClass
 @Retention(AnnotationRetention.RUNTIME)
 annotation class XmlString(val value: KClass<out XmlStringAdapter<*>>)
 
+@Target(AnnotationTarget.PROPERTY)
+annotation class AttributeInXML()
+
+/*
 // Anotação para associar um adaptador que realiza alterações na entidade XML após o mapeamento automático
 @Retention(AnnotationRetention.RUNTIME)
 annotation class XmlAdapter(val value: KClass<out XmlAdapterBase>)
+*/
 
 // Anotação para personalizar a tradução para XML
 @Target(AnnotationTarget.PROPERTY)
