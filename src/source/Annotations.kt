@@ -22,3 +22,10 @@ annotation class XMLProperty(
     val type: XMLType = XMLType.ATTRIBUTE, // Tipo de representação no XML (atributo, entidade ou objeto)
     val ignore: Boolean = false // Indica se a propriedade deve ser ignorada na geração do XML
 )
+/*
+Anotação para diferença entre atributo e XMLElement
+Anotação para Adicionar porcentagem
+Anotação para ignorar no campo no xml
+
+
+ */
