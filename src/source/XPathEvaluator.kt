@@ -3,12 +3,10 @@ package source
 
 class XPathEvaluator(private val document: XMLDocument) {
     // Método para avaliar uma expressão XPath e retornar uma lista de elementos correspondentes
-    fun evaluate(expression: String): String {
-        val path = expression.split("/")
-        var xPathEvaluatorString = ""
-        var listXPathCompleted = mutableListOf<XMLElement>()
-        var listTemp = mutableListOf(document.rootElement!!)
 
+    fun evaluate(expression: String): List<XMLElement> {
+        val path = expression.split("/")
+        var elements: MutableList<XMLElement> = mutableListOf(document.rootElement ?: return emptyList())
         fun aux(tagname: String, listXPath: MutableList<XMLElement>): MutableList<XMLElement> {
             val listTempAuxFun = listXPath.toMutableList()
             listXPath.forEach {
@@ -19,16 +17,10 @@ class XPathEvaluator(private val document: XMLDocument) {
             }
             return listTempAuxFun
         }
-
         for (step in path) {
-            listXPathCompleted = aux(step, listTemp)
-            listTemp = listXPathCompleted.toMutableList()
+            val filteredElements = aux(step,elements)
+            elements = filteredElements.toMutableList()
         }
-
-        listXPathCompleted.forEach {
-            xPathEvaluatorString += it.prettyPrint()
-        }
-
-        return xPathEvaluatorString
+        return elements
     }
 }
