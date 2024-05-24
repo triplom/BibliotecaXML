@@ -3,28 +3,16 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
 
 
-
 // Interface para adaptadores XML personalizados
-/*interface XmlAdapterBase {
+interface XmlAdapterBase {
     fun adapt(element: XMLElement)
 }
-
- */
 
 // Interface para adaptadores de string XML personalizados
 interface XmlStringAdapter<T> {
     fun adapt(value: String): String
 }
 
-// Implementação padrão de um adaptador XML que não faz nada
-/*
-class NoOpXmlAdapter : XmlAdapterBase {
-    override fun adapt(element: XMLElement) {
-        // Não faz nada
-    }
-}
-
- */
 
 // Implementação padrão de um adaptador de string XML que retorna o valor original
 class NoOpXmlStringAdapter<T> : XmlStringAdapter<T> {
