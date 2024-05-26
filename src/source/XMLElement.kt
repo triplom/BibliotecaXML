@@ -1,5 +1,8 @@
 package source
 
+import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.hasAnnotation
+
 // Classe para representar um elemento XML
 class XMLElement(var name: String) {
     // Lista de atributos do elemento
