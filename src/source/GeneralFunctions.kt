@@ -3,7 +3,6 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
 
 
-
 // Interface para adaptadores XML personalizados
 interface XmlAdapterBase {
     fun adapt(element: XMLElement)
@@ -14,12 +13,6 @@ interface XmlStringAdapter<T> {
     fun adapt(value: String): String
 }
 
-// Implementação padrão de um adaptador XML que não faz nada
-class NoOpXmlAdapter : XmlAdapterBase {
-    override fun adapt(element: XMLElement) {
-        // Não faz nada
-    }
-}
 
 // Implementação padrão de um adaptador de string XML que retorna o valor original
 class NoOpXmlStringAdapter<T> : XmlStringAdapter<T> {
@@ -36,18 +29,19 @@ class AddPercentageXmlStringAdapter : XmlStringAdapter<Int> {
 }
 
 // Implementação do adaptador de personalização pós-mapeamento para a classe FUC
+/*
 class FUCAdapter : XmlAdapterBase {
     override fun adapt(element: XMLElement) {
         // Implemente as alterações necessárias na entidade XML após o mapeamento automático para a classe FUC
     }
-}
+}*/
 
 // Função para converter um objeto em XML
 fun Any.toXML(): XMLElement {
     val clazz = this::class
 
     // Obtendo o nome da classe para criar o elemento XML
-    val xmlElement = XMLElement(clazz.simpleName ?: "unknown")
+    val xmlElement = XMLElement(clazz.simpleName ?: "unknown", "root")
 
     // Itera sobre as propriedades da classe do objeto
     clazz.declaredMemberProperties.forEach { prop ->

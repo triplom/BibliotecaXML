@@ -1,7 +1,9 @@
 package source
 
 // Classe para representar um elemento XML
-class XMLElement(var name: String) {
+class XMLElement(
+    @XMLElement
+    var name: String) {
     // Lista de atributos do elemento
     val attributes = mutableListOf<XMLAttribute>()
 
@@ -52,31 +54,51 @@ class XMLElement(var name: String) {
         children.forEach { it.accept(visitor) }
     }
 
-    // Método para imprimir o elemento de forma bonita
+//    // Método para imprimir o elemento de forma bonita
+//    fun prettyPrint(depth: Int = 0): String {
+//        val indent = "\t".repeat(depth) // Gerando a string de indentação baseada na profundidade
+//        val result = StringBuilder() // StringBuilder para construir a string de saída
+//
+//        // Adicionando a tag de abertura do elemento com seus atributos
+//        result.append("$indent<$name")
+//        //FALTA CENÁRIO PARA IR ATTRIBUTES.ISNOTEMPTY
+//        if (attributes.isNotEmpty()) {
+//            attributes.forEach { result.append(" ${it.name}=\"${it.value}\"") }
+//            result.append(">")
+//        } else {
+//            result.append("/>")
+//        }
+//
+//        // Adicionando uma quebra de linha
+//        result.append("\n")
+//
+//        // Imprimindo os elementos filhos de forma recursiva
+//        children.forEach { result.append(it.prettyPrint(depth + 1)) }
+//
+//        // Adicionando a tag de fechamento do elemento, se necessário
+//        //ADICIONAR CASO DE TESTE PARA VER SE O CHILDREN IS NOT EMPTY
+//        if (children.isNotEmpty()) {
+//            result.append("$indent</$name>\n")
+//        }
+//
+//        return result.toString() // Retornando a string de saída
+//    }
+
     fun prettyPrint(depth: Int = 0): String {
         val indent = "\t".repeat(depth) // Gerando a string de indentação baseada na profundidade
         val result = StringBuilder() // StringBuilder para construir a string de saída
 
         // Adicionando a tag de abertura do elemento com seus atributos
         result.append("$indent<$name")
-        //FALTA CENÁRIO PARA IR ATTRIBUTES.ISNOTEMPTY
-        if (attributes.isNotEmpty()) {
-            attributes.forEach { result.append(" ${it.name}=\"${it.value}\"") }
-            result.append(">")
-        } else {
-            result.append("/>")
-        }
-
-        // Adicionando uma quebra de linha
-        result.append("\n")
-
-        // Imprimindo os elementos filhos de forma recursiva
-        children.forEach { result.append(it.prettyPrint(depth + 1)) }
-
-        // Adicionando a tag de fechamento do elemento, se necessário
-        //ADICIONAR CASO DE TESTE PARA VER SE O CHILDREN IS NOT EMPTY
-        if (children.isNotEmpty()) {
+        attributes.forEach { result.append(" ${it.name}=\"${it.value}\"") }
+        if (children.size > 0){
+            result.append(">\n")
+            // Imprimindo os elementos filhos de forma recursiva
+            children.forEach { result.append(it.prettyPrint(depth + 1)) }
+            // Adicionando a tag de fechamento do elemento
             result.append("$indent</$name>\n")
+        }else{
+            result.append("/>\n")
         }
 
         return result.toString() // Retornando a string de saída

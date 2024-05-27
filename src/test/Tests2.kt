@@ -427,5 +427,3 @@ class XMLAnnotationsTest {
         assertEquals("123 Main St, Springfield", xmlElement.children[0].text)
     }
 }
-
-

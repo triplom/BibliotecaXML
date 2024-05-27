@@ -59,23 +59,4 @@ class XMLDocument {
             }
         }
     }
-
-    // Método auxiliar para obter o índice de um elemento
-    private fun getIndexOfElement(nameAttribute: String, listAttributes: MutableList<XMLAttribute>): Int {
-        // Obtendo o índice do elemento com o nome especificado
-        return listAttributes.indexOfFirst { it.name == nameAttribute }
-    }
-
-    // Método para escrever o documento XML em um arquivo
-    fun writeToFile(fileName: String) {
-        // Verifica se o documento e o elemento raiz não são nulos
-        rootElement ?: throw IllegalStateException("RootElement is null")
-        val xmlString = rootElement?.prettyPrint() ?: ""
-        File(fileName).writeText(xmlString)
-    }
-
-    // Método para aceitar um visitante XML
-    fun accept(visitor: XMLVisitor) {
-        rootElement?.accept(visitor)
-    }
 }
