@@ -16,10 +16,10 @@ annotation class XMLString(val value: KClass<out XMLStringAdapter<*>>) {
 @Retention(AnnotationRetention.RUNTIME)
 annotation class AttributeInXML()
 
-//// Anotação para associar um adaptador que realiza alterações na entidade XML após o mapeamento automático
-//@Retention(AnnotationRetention.RUNTIME)
-//@Target(AnnotationTarget.CLASS)
-//annotation class XMLAdapter(val value: KClass<out XMLAdapterBase>)
+// Anotação para associar um adaptador que realiza alterações na entidade XML após o mapeamento automático
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.CLASS)
+annotation class XMLAdapter(val value: KClass<out XMLAdapterBase>)
 
 // Anotação para personalizar a tradução para XML
 @Target(AnnotationTarget.PROPERTY)
@@ -43,9 +43,12 @@ annotation class XMLAttribute(val name: String = "", val value: String = "")
 // Anotação para marcar uma propriedade como um elemento XML
 @Target(AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class XMLElement(val isAttribute: Boolean = false)
+annotation class XMLElement(val isAttribute: Boolean = false, val s: String)
 
 // Anotação para adicionar porcentagem
 @Target(AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class XMLPercentage
+
+
+annotation class XMLName(val value: String)

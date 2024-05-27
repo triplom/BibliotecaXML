@@ -1,7 +1,9 @@
 package source
 
 // Classe para representar um elemento XML
-class XMLElement(var name: String) {
+class XMLElement(
+    @XMLElement
+    var name: String) {
     // Lista de atributos do elemento
     val attributes = mutableListOf<XMLAttribute>()
 

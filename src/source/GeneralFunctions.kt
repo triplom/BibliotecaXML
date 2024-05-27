@@ -41,7 +41,7 @@ fun Any.toXML(): XMLElement {
     val clazz = this::class
 
     // Obtendo o nome da classe para criar o elemento XML
-    val xmlElement = XMLElement(clazz.simpleName ?: "unknown")
+    val xmlElement = XMLElement(clazz.simpleName ?: "unknown", "root")
 
     // Itera sobre as propriedades da classe do objeto
     clazz.declaredMemberProperties.forEach { prop ->
