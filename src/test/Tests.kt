@@ -4,13 +4,6 @@ import org.junit.jupiter.api.Test
 import source.*
 import kotlin.reflect.full.declaredMemberProperties
 
-// Testes para verificar a funcionalidade das anotações XML
-class XMLAnnotationsTest {
-
-    // Teste para verificar se as propriedades foram convertidas corretamente com as anotações
-    //ADICIONAR TESTE DE CONVERSÃO UTILIZANDO ANOTAÇÕES
-}
-
 // Testes para a funcionalidade da classe XMLDocument
 class XMLDocumentTest {
 
@@ -19,8 +12,8 @@ class XMLDocumentTest {
     // Configuração inicial para cada teste: criamos um documento com um elemento raiz "root" e um elemento filho "child".
     @BeforeEach
     fun setUp() {
-        val root = XMLElement("root")
-        val child = XMLElement("child")
+        val root = XMLElement(isAttribute = true, "root")
+        val child = XMLElement(isAttribute = true, "child")
         root.addChild(child)
         document = source.XMLDocument()
         document.rootElement = root
@@ -29,14 +22,14 @@ class XMLDocumentTest {
     // Testes para manipulação de atributos
     @Test
     fun `test add attribute`() {
-        val element = XMLElement("element")
+        val element = XMLElement("element", "root")
         element.addAttribute("attribute", "value")
         assertEquals(1, element.attributes.size)
     }
 
     @Test
     fun `test remove attribute`() {
-        val element = XMLElement("element")
+        val element = XMLElement("element", "root")
         element.addAttribute("attribute", "value")
         element.removeAttribute("attribute")
         assertEquals(0, element.attributes.size)
@@ -45,16 +38,16 @@ class XMLDocumentTest {
     // Testes para manipulação de elementos filhos
     @Test
     fun `test add entity`() {
-        val parent = XMLElement("parent")
-        val child = XMLElement("child")
+        val parent = XMLElement("parent", "root")
+        val child = XMLElement("child", "root")
         parent.addChild(child)
         assertEquals(1, parent.children.size)
     }
 
     @Test
     fun `test remove entity`() {
-        val parent = XMLElement("parent")
-        val child = XMLElement("child")
+        val parent = XMLElement("parent", "root")
+        val child = XMLElement("child", "root")
         parent.addChild(child)
         parent.removeChild(child)
         assertEquals(0, parent.children.size)
@@ -63,11 +56,11 @@ class XMLDocumentTest {
     // Testes para navegação na hierarquia do XML
     @Test
     fun `test find ancestry`() {
-        val root = XMLElement("root")
-        val child1 = XMLElement("child1")
-        val child2 = XMLElement("child2")
-        val child3 = XMLElement("child3")
-        val child4 = XMLElement("child4")
+        val root = XMLElement("root", "root")
+        val child1 = XMLElement("child1", "root")
+        val child2 = XMLElement("child2", "root")
+        val child3 = XMLElement("child3", "root")
+        val child4 = XMLElement("child4", "root")
 
         root.addChild(child1)
         root.addChild(child2)
@@ -84,11 +77,11 @@ class XMLDocumentTest {
 
     @Test
     fun `test find descendants`() {
-        val child4 = XMLElement("child4")
-        val child3 = XMLElement("child3")
-        val child2 = XMLElement("child2")
-        val child1 = XMLElement("child1")
-        val parent = XMLElement("parent")
+        val child4 = XMLElement("child4", "root")
+        val child3 = XMLElement("child3", "root")
+        val child2 = XMLElement("child2", "root")
+        val child1 = XMLElement("child1", "root")
+        val parent = XMLElement("parent", "root")
 
         parent.addChild(child1)
         child1.addChild(child2)
@@ -101,7 +94,7 @@ class XMLDocumentTest {
 
     @Test
     fun `test has attribute`() {
-        val child = XMLElement("child")
+        val child = XMLElement("child", "root")
         child.addAttribute("Test", "Hello")
         assertTrue(child.hasAttribute("Test"))
         assertFalse(child.hasAttribute("Another"))
@@ -132,14 +125,14 @@ class XMLDocumentTest {
 
     @Test
     fun testRenameEntityGlobal() {
-        val root = XMLElement("root")
-        val child = XMLElement("child")
+        val root = XMLElement("root", "root")
+        val child = XMLElement("child", "root")
         root.addChild(child)
 
         val document = XMLDocument()
         document.rootElement = root
         child.addAttribute("Teste", "Hello")
-        val child2 = XMLElement("child")
+        val child2 = XMLElement("child", "root")
         child.addChild(child2)
 
 
@@ -157,10 +150,10 @@ class XMLElementTest {
     // Teste para garantir que os métodos de manipulação de elementos funcionam corretamente
     @Test
     fun testXMLElement() {
-        val element = XMLElement("person")
+        val element = XMLElement("person", "root")
         element.addAttribute("name", "John")
         element.addAttribute("age", "30")
-        element.addChild(XMLElement("address").apply {
+        element.addChild(XMLElement("address", "root").apply {
             addAttribute("city", "New York")
             addAttribute("zip", "10001")
         })
@@ -183,8 +176,8 @@ class XMLElementTest {
 
     @Test
     fun testPrettyPrint(): Unit {
-        val root = XMLElement("root")
-        val child = XMLElement("child")
+        val root = XMLElement("root", "root")
+        val child = XMLElement("child", "root")
         root.addChild(child)
 
         val document = XMLDocument()
@@ -196,7 +189,7 @@ class XMLElementTest {
         assertEquals(expected, actual)
 
 
-        val child2 = XMLElement("child2")
+        val child2 = XMLElement("child2", "root")
         child.addChild(child2)
         val expectedwithDescendants = "<root>\n\t<child>\n\t\t<child2/>" +
                 "\n\t</child>\n</root>"
@@ -242,9 +235,9 @@ class XMLTests {
     // Teste para verificar a avaliação de XPath em um documento XML
     @Test
     fun testXPathEvaluation2() {
-        val root = XMLElement("root")
-        val child1 = XMLElement("child")
-        val child2 = XMLElement("child")
+        val root = XMLElement("root", "root")
+        val child1 = XMLElement("child", "root")
+        val child2 = XMLElement("child", "root")
         root.addChild(child1)
         root.addChild(child2)
 
@@ -259,9 +252,9 @@ class XMLTests {
     // Teste para verificar a avaliação de XPath em um documento XML com um único elemento filho
     @Test
     fun testXPathEvaluationSingleChild() {
-        val root = XMLElement("root")
-        val child = XMLElement("child")
-        val child1 = XMLElement("child1")
+        val root = XMLElement("root", "root")
+        val child = XMLElement("child", "root")
+        val child1 = XMLElement("child1", "root")
 
         root.addChild(child)
         child.addChild(child1)
@@ -279,9 +272,9 @@ class XMLTests {
     // Teste para verificar a avaliação de XPath em um documento XML com atributos
     @Test
     fun testXPathEvaluationWithAttributes()  {
-        val root = XMLElement("root")
-        val child = XMLElement("child")
-        val child1 = XMLElement("child1")
+        val root = XMLElement("root", "root")
+        val child = XMLElement("child", "root")
+        val child1 = XMLElement("child1", "root")
         child1.addAttribute("attribute1", "value1")
         child1.addAttribute("attribute2", "value2")
         root.addChild(child)
@@ -304,9 +297,9 @@ class XMLTests {
     // Teste para verificar a avaliação de XPath com vários níveis de filhos
     @Test
     fun testXPathEvaluationMultipleLevels() {
-        val parent = XMLElement("parent")
-        val child1 = XMLElement("child1")
-        val child2 = XMLElement("child2")
+        val parent = XMLElement("parent", "root")
+        val child1 = XMLElement("child1", "root")
+        val child2 = XMLElement("child2", "root")
         child1.addChild(child2)
         parent.addChild(child1)
 
@@ -339,3 +332,100 @@ class XMLReflectionTest {
         assertEquals("field3", properties.elementAt(2).name)
     }
 }
+
+// Testes added to Any.ToXML
+
+
+class ToXMLTest {
+
+    @Test
+    fun testPersonToXML() {
+        val address = Address("123 Main St", "Springfield")
+        val person = Person("John", "Doe", 30, "secret", address)
+
+        val xmlElement = person.toXML()
+
+        assertEquals("Person", XMLElement.name)
+        assertTrue(xmlElement.hasAttribute("firstName"))
+        assertTrue(xmlElement.hasAttribute("lastName"))
+        assertTrue(xmlElement.hasAttribute("age"))
+        assertFalse(xmlElement.hasAttribute("password"))
+
+        val firstNameAttr = xmlElement.attributes.find { it.name == "firstName" }
+        assertNotNull(firstNameAttr)
+        assertEquals("John", firstNameAttr?.value)
+
+        val lastNameAttr = xmlElement.attributes.find { it.name == "lastName" }
+        assertNotNull(lastNameAttr)
+        assertEquals("Doe", lastNameAttr?.value)
+
+        val ageAttr = xmlElement.attributes.find { it.name == "age" }
+        assertNotNull(ageAttr)
+        assertEquals("30", ageAttr?.value)
+
+        assertEquals(1, xmlElement.children.size)
+
+        val addressElement = xmlElement.children.find { it.name == "Address" }
+        assertNotNull(addressElement)
+        assertEquals("123 Main St", addressElement?.attributes?.find { it.name == "street" }?.value)
+        assertEquals("Springfield", addressElement?.attributes?.find { it.name == "city" }?.value)
+    }
+
+    @Test
+    fun testAddressToXML() {
+        val address = Address("123 Main St", "Springfield")
+
+        val xmlElement = address.toXML()
+
+        assertEquals("Address", xmlElement.name)
+        assertTrue(xmlElement.hasAttribute("street"))
+        assertTrue(xmlElement.hasAttribute("city"))
+
+        val streetAttr = xmlElement.attributes.find { it.name == "street" }
+        assertNotNull(streetAttr)
+        assertEquals("123 Main St", streetAttr?.value)
+
+        val cityAttr = xmlElement.attributes.find { it.name == "city" }
+        assertNotNull(cityAttr)
+        assertEquals("Springfield", cityAttr?.value)
+    }
+}
+
+
+
+// Testes para verificar a funcionalidade das anotações XML
+class XMLAnnotationsTest {
+
+    // Teste para verificar se as propriedades foram convertidas corretamente com as anotações
+    @Test
+    fun `test annotation conversion`() {
+        // Criando uma classe com anotações XML para teste
+        @XMLName("Person")
+        data class Person(
+            @XMLAttribute("name")
+            val name: String,
+            @XMLAttribute("age")
+            val age: Int,
+            @XMLElement("address", "root")
+            val address: String
+        )
+
+        // Criando uma instância da classe
+        val person = Person("John", 30, "123 Main St, Springfield")
+
+        // Convertendo para XML
+        val xmlElement = person.toXML()
+
+        // Verificando se as anotações foram aplicadas corretamente
+        assertEquals("Person", xmlElement.name)
+        assertTrue(xmlElement.hasAttribute("name"))
+        assertEquals("John", xmlElement.getAttributeValue("name"))
+        assertTrue(xmlElement.hasAttribute("age"))
+        assertEquals("30", xmlElement.getAttributeValue("age"))
+        assertEquals(1, xmlElement.children.size)
+        assertEquals("address", xmlElement.children[0].name)
+        assertEquals("123 Main St, Springfield", xmlElement.children[0].text)
+    }
+}
+
+
