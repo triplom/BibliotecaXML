@@ -25,22 +25,21 @@ annotation class XMLProperty(
 )
 
 // Anotação para ignorar o campo no XML
-@Target(AnnotationTarget.PROPERTY)
+@Target(AnnotationTarget.VALUE_PARAMETER)
 annotation class XMLIgnore
 
 // Anotação para marcar uma propriedade como um atributo XML
-@Target(AnnotationTarget.PROPERTY)
+@Target(AnnotationTarget.VALUE_PARAMETER)
 annotation class XMLAttribute_Annotation(val name: String = "", val value: String = "")
 
 // Anotação para marcar uma propriedade como um elemento XML
-@Target(AnnotationTarget.PROPERTY)
+@Target(AnnotationTarget.VALUE_PARAMETER)
 annotation class XMLElement_Annotation(val isAttribute: Boolean = false)
 
 // Anotação para adicionar porcentagem
-@Target(AnnotationTarget.PROPERTY)
-@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.VALUE_PARAMETER)
 annotation class XMLPercentage()
 
 // Annotation to change the name
-@Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.VALUE_PARAMETER)
 annotation class XMLName(val name:String="")

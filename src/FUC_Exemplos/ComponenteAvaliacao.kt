@@ -5,25 +5,27 @@ import kotlin.reflect.full.*
 
 @XMLName("componente")
 class ComponenteAvaliacao(
-    @XMLName("grande nome")val nome: String,
-    @XMLName("percentagem")@XMLPercentage val peso: Int){
+    val nome: String,
+    @XMLPercentage val peso: Int, name: String
+) : XMLElement(){
     init {
         val objComponent = this::class
-        val XMLElementToComponent = XMLElement("componente")
-        objComponent.primaryConstructor!!.parameters.forEach {
-            val attributeNameXML =
-                if (it.hasAnnotation<XMLName>())
-                    it.findAnnotation<XMLName>().toString()
-                else it.name.toString()
-            if (it.hasAnnotation<XMLPercentage>()){
-               XMLElementToComponent.addAttribute(attributeNameXML , "%")
-            }
+        objComponent.primaryConstructor!!.parameters.forEach { parameter ->
+            val xmlNameAnnotation = if (parameter.hasAnnotation<XMLName>()) {
+                                        parameter.findAnnotation<XMLName>()?.name.toString()
+                                     } else {
+                                        parameter.name.toString()
+                                     }
 
+            val property = this::class.members.find { it.name == parameter.name }
+            val propertyValue = property?.call(this)
+
+            if (parameter.hasAnnotation<XMLPercentage>()) {
+                this.addAttribute(xmlNameAnnotation, "$propertyValue%")
+            } else {
+                this.addAttribute(xmlNameAnnotation, "$propertyValue")
+            }
         }
     }
 
-}
-
-fun main(){
-    val test = ComponenteAvaliacao("Teste",12)
 }
