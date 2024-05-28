@@ -1,7 +1,12 @@
+<<<<<<< HEAD
 
 package source
 
 import FUC_Exemplos.ComponenteAvaliacao
+=======
+import FUC_Exemplos.ComponenteAvaliacao
+import FUC_Exemplos.FUC
+>>>>>>> Miguel
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -298,12 +303,53 @@ class XMLReflectionTest {
     }
 }
 
+<<<<<<< HEAD
+=======
+class testComponentAvaliacao{
+
+    @Test
+    fun test_pretty_princt_component_avaliacao(){
+        val componentAvaliacaoExemplo = ComponenteAvaliacao("Trabalho Prático", 50)
+        val resultComponentAvaliacao = componentAvaliacaoExemplo.prettyPrint()
+
+        assertEquals("<componente Nome_elemento_avaliação=\"Trabalho Prático\" peso=\"50%\"/>", resultComponentAvaliacao)
+    }
+}
+
+class testFUC{
+
+    @Test
+    fun test_pretty_print_FUC(){
+        val componentAvaliacao1 = ComponenteAvaliacao("Quizes", 20)
+        val componentAvaliacao2 = ComponenteAvaliacao("Trabalho Entrega Intercalar", 30)
+        val componentAvaliacao3 = ComponenteAvaliacao("Trabalho Entrega Final", 50)
+
+        val fucTest = FUC("M123456", "Programação Avançada", 6.0, "Desenvolver APIs", mutableListOf(componentAvaliacao1, componentAvaliacao2, componentAvaliacao3))
+        val resultFUCTest = fucTest.prettyPrint()
+
+        assertEquals("<fuc codigo=\"M123456\">\n" +
+                "\t<nome>\"Programação Avançada\"</nome>\n" +
+                "\t<ects>\"6.0\"</ects>\n" +
+                "\t<avaliacao>\n" +
+                "\t\t<componente Nome_elemento_avaliação=\"Quizes\" peso=\"20%\"/>\n" +
+                "\t\t<componente Nome_elemento_avaliação=\"Trabalho Entrega Intercalar\" peso=\"30%\"/>\n" +
+                "\t\t<componente Nome_elemento_avaliação=\"Trabalho Entrega Final\" peso=\"50%\"/>\n" +
+                "\t</avaliacao>\n" +
+                "</fuc>",resultFUCTest)
+    }
+}
+
+>>>>>>> Miguel
 // ## 27/05 ##
 // Testes added to Any.ToXML
 
 
 class ToXMLTest {
+<<<<<<< HEAD
 
+=======
+/*
+>>>>>>> Miguel
     @Test
     fun testPersonToXML() {
         val address = Address("123 Main St", "Springfield")
@@ -376,9 +422,15 @@ class XMLAnnotationsTest {
         // Criando uma classe com anotações XML para teste
         @XMLName("Person")
         data class Person(
+<<<<<<< HEAD
             @XMLAttribute("name")
             val name: String,
             @XMLAttribute("age")
+=======
+            @XMLAttribute_Annotation("name")
+            val name: String,
+            @XMLAttribute_Annotation("age")
+>>>>>>> Miguel
             val age: Int,
             @XMLElement_Annotation(isAttribute = true)
             val address: String
@@ -399,6 +451,7 @@ class XMLAnnotationsTest {
         assertEquals(1, xmlElement.children.size)
         assertEquals("address", xmlElement.children[0].name)
         assertEquals("123 Main St, Springfield", xmlElement.children[0].text)
+<<<<<<< HEAD
     }
 }
 
@@ -433,3 +486,7 @@ class ComponenteAvaliacaoTest {
 
 
 
+=======
+    }*/
+}
+>>>>>>> Miguel
