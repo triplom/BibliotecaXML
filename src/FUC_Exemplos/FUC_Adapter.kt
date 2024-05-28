@@ -9,7 +9,7 @@ class FUC(
     val ects: Double,
     val observacoes: String,
     val avaliacao: List<ComponenteAvaliacao>
-) : XMLElement("fuc"){
+) : XMLElement("fuc", "root"){
 
     val objectFUC = this::class
 
@@ -22,9 +22,13 @@ class FUC(
             if (parameter.hasAnnotation<XMLIgnore>())
 
             if (parameter.hasAnnotation<XMLPercentage>()) {
-                this.addAttribute(xmlNameAnnotation, "$propertyValue%")
+                if (xmlNameAnnotation != null) {
+                    this.addAttribute(xmlNameAnnotation, "$propertyValue%")
+                }
             } else {
-                this.addAttribute(xmlNameAnnotation, "$propertyValue")
+                if (xmlNameAnnotation != null) {
+                    this.addAttribute(xmlNameAnnotation, "$propertyValue")
+                }
             }
         }
     }
@@ -40,7 +44,7 @@ class FUC(
         result.append("$indent<$name")
 
         objectFUC.primaryConstructor!!.parameters.forEach {
-            if (it.hasAnnotation<XMLAttribute_Annotation>()){
+            if (it.hasAnnotation<XMLAttribute>()){
 
             }
         }
