@@ -1,66 +1,57 @@
 package FUC_Exemplos
 
 import source.*
+import java.awt.event.ComponentEvent
 import kotlin.reflect.full.*
-
+@XMLName("fuc")
 class FUC(
-    val codigo: String,
-    val nome: String,
-    val ects: Double,
-    val observacoes: String,
-    val avaliacao: List<ComponenteAvaliacao>
+    @XMLAttribute_Annotation val codigo: String,
+    @XMLElement_Annotation val nome: String,
+    @XMLElement_Annotation val ects: Double,
+    @XMLIgnore val observacoes: String,
+    @XMLElement_Annotation val avaliacao: List<ComponenteAvaliacao>
 ) : XMLElement("fuc"){
 
     val objectFUC = this::class
 
-    init {
-        objectFUC.primaryConstructor!!.parameters.forEach { parameter ->
-            val xmlNameAnnotation = parameter.name
-            val property = this::class.members.find { it.name == parameter.name }
-            val propertyValue = property?.call(this)
-
-            if (parameter.hasAnnotation<XMLIgnore>())
-
-            if (parameter.hasAnnotation<XMLPercentage>()) {
-                this.addAttribute(xmlNameAnnotation, "$propertyValue%")
-            } else {
-                this.addAttribute(xmlNameAnnotation, "$propertyValue")
-            }
-        }
-    }
-
+    val nameObject = objectFUC.findAnnotation<XMLName>()?.name.toString()
     override fun prettyPrint(depth: Int): String {
-
-
 
         val indent = "\t".repeat(depth) // Gerando a string de indentação baseada na profundidade
         val result = StringBuilder() // StringBuilder para construir a string de saída
 
         // Adicionando a tag de abertura do elemento com seus atributos
-        result.append("$indent<$name")
+        result.append("$indent<$nameObject")
 
-        objectFUC.primaryConstructor!!.parameters.forEach {
-            if (it.hasAnnotation<XMLAttribute_Annotation>()){
+        objectFUC.primaryConstructor!!.parameters.forEach { parameter->
+            if (parameter.hasAnnotation<XMLAttribute_Annotation>()){
+                val xmlNameAnnotation = parameter.name
+                val property = this::class.members.find { it.name == parameter.name }
+                val propertyValue = property?.call(this)
 
+                result.append(" ${xmlNameAnnotation}=\"${propertyValue}\"")
             }
         }
-        attributes.forEach { result.append(" ${it.name}=\"${it.value}\"") }
-        if (children.size > 0){
-            result.append(">\n")
-            // Imprimindo os elementos filhos de forma recursiva
-            children.forEach { result.append(it.prettyPrint(depth + 1)) }
-            // Adicionando a tag de fechamento do elemento
-            result.append("$indent</$name>\n")
-        }else{
-            result.append("/>\n")
-        }
+        result.append(">\n")
+        objectFUC.primaryConstructor!!.parameters.forEach { parameter->
+            if (parameter.hasAnnotation<XMLElement_Annotation>()){
+                val xmlNameAnnotation = parameter.name
+                val property = this::class.members.find { it.name == parameter.name }
+                val propertyValue = property?.call(this)
 
+                if (xmlNameAnnotation == "avaliacao"){
+                    result.append("${indent}${indent}\t<${xmlNameAnnotation}>\n")
+                    for (item in this.avaliacao){
+                        result.append(item.prettyPrint(2))
+                    }
+                    result.append("${indent}${indent}\t</${xmlNameAnnotation}>\n")
+                }else {
+                    result.append("${indent}${indent}\t<${xmlNameAnnotation}>\"${propertyValue}\"</${xmlNameAnnotation}>\n")
+                }
+            }
+        }
+        result.append("$indent</$nameObject>")
         return result.toString() // Retornando a string de saída
     }
-    /*
-        xml attribute para os atributos que devem estar juntos à primeira tag
-        xml element para os atributos que são elementos tentar criar um dicionário para ter nome da tag e o seu valor
-        xml ignore para ignorar os attributos
-     */
 
 }
