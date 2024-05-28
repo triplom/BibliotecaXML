@@ -5,9 +5,15 @@ import kotlin.reflect.full.*
 
 @XMLName("componente")
 class ComponenteAvaliacao(
+<<<<<<< HEAD
+    val nome: String,
+    @XMLPercentage val peso: Int, name: String
+) : XMLElement(s = "root") {
+=======
     @XMLName("Nome_elemento_avaliação")val nome: String,
     @XMLPercentage val peso: Int
 ) : XMLElement(){
+>>>>>>> Miguel
     init {
         val objComponent = this::class
         objComponent.primaryConstructor!!.parameters.forEach { parameter ->

@@ -40,7 +40,7 @@ class XMLDocument {
                 // Renomeando o atributo em todos os elementos filhos
                 element.attributes.find { it.name == oldName }?.name = newName
             }
-        }
+       }
     }
 
     // Método para renomear entidades globalmente em todos os elementos filhos de um elemento específico

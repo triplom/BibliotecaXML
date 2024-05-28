@@ -1,7 +1,5 @@
 package source
 
-import kotlin.reflect.KClass
-
 // Anotação para indicar uma classe que implementa a transformação a ser aplicada à string por padrão
 
 @Retention(AnnotationRetention.RUNTIME)
@@ -50,7 +48,7 @@ annotation class XMLIgnore
 
 // Anotação para marcar uma propriedade como um atributo XML
 @Target(AnnotationTarget.VALUE_PARAMETER)
-annotation class XMLAttribute_Annotation(val name: String = "", val value: String = "")
+annotation class XMLAttribute(val name: String = "", val value: String = "")
 
 // Anotação para marcar uma propriedade como um elemento XML
 @Target(AnnotationTarget.VALUE_PARAMETER)
@@ -85,4 +83,10 @@ annotation class XMLPercentage
 
 
 annotation class XMLName(val value: String)
+
+//annotation class XMLName(val name:String="") {
+//    companion object {
+//        val name: Any? = null
+    }
+}
 
