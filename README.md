@@ -46,7 +46,7 @@ Contribuições são bem-vindas! Você pode relatar problemas, sugerir melhorias
 
 ## Autores
 
-Este projeto foi desenvolvido por @triplom e @MiguelFigueiredo e está sob a licença ...
+Este projeto foi desenvolvido por @triplom e @miguel-as-figueiredo 
 
 ## Explicações para cada etapa do código
 
