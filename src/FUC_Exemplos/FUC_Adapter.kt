@@ -43,6 +43,7 @@ class FUC(
                     result.append("${indent}${indent}\t<${xmlNameAnnotation}>\n")
                     for (item in this.avaliacao){
                         result.append(item.prettyPrint(2))
+                        result.append("\n")
                     }
                     result.append("${indent}${indent}\t</${xmlNameAnnotation}>\n")
                 }else {

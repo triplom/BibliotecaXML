@@ -5,7 +5,7 @@ import kotlin.reflect.full.*
 
 @XMLName("componente")
 class ComponenteAvaliacao(
-    val nome: String,
+    @XMLName("Nome_elemento_avaliação")val nome: String,
     @XMLPercentage val peso: Int
 ) : XMLElement(){
     init {
@@ -42,15 +42,8 @@ class ComponenteAvaliacao(
         // Adicionando a tag de abertura do elemento com seus atributos
         result.append("$indent<${objName}")
         attributes.forEach { result.append(" ${it.name}=\"${it.value}\"") }
-        if (children.size > 0){
-            result.append(">\n")
-            // Imprimindo os elementos filhos de forma recursiva
-            children.forEach { result.append(it.prettyPrint(depth + 1)) }
-            // Adicionando a tag de fechamento do elemento
-            result.append("$indent</$name>\n")
-        }else{
-            result.append("/>\n")
-        }
+        result.append("/>")
+
 
         return result.toString() // Retornando a string de saída
     }
