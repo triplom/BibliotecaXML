@@ -1,7 +1,10 @@
+
+package source
+
+import FUC_Exemplos.ComponenteAvaliacao
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import source.*
 import kotlin.reflect.full.declaredMemberProperties
 
 // Testes para a funcionalidade da classe XMLDocument
@@ -398,3 +401,35 @@ class XMLAnnotationsTest {
         assertEquals("123 Main St, Springfield", xmlElement.children[0].text)
     }
 }
+
+// Test FUC e Componente Avaliação - 28/05
+
+class ComponenteAvaliacaoTest {
+
+    @Test
+    fun `test FUC ComponenteAvaliacao`() {
+        // Teste 1: Criação de um ComponenteAvaliacao e verificação dos atributos
+        val componente = ComponenteAvaliacao(nome = "Trabalho Final", peso = 40, name = "Componente1")
+
+        // Verificando o nome do componente
+        assertEquals("Trabalho Final", componente.getAttributeValue("nome"))
+
+        // Verificando o peso do componente com porcentagem
+        assertEquals("40%", componente.getAttributeValue("peso"))
+
+        // Verificando os atributos
+        val expectedAttributes = mapOf("nome" to "Trabalho Final", "peso" to "40%")
+        componente.attributes.forEach { attribute ->
+            assertEquals(expectedAttributes[attribute.name], attribute.value)
+        }
+
+        // Teste 2: Impressão legível do componente
+        val expectedPrettyPrint = """
+            <componente nome="Trabalho Final" peso="40%"/>
+        """.trimIndent()
+        assertEquals(expectedPrettyPrint, componente.prettyPrint().trim())
+    }
+}
+
+
+
