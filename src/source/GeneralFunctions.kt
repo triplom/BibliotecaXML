@@ -73,16 +73,16 @@ fun Any.toXML(): XMLElement {
                         }
                     }
                     XMLType.OBJECT -> {
-                        // Verificando se a propriedade está anotada com @XmlString para aplicar personalização
-                        val stringAdapterAnnotation = prop.findAnnotation<XmlString>()
-                        val adapter = stringAdapterAnnotation?.value?.java?.newInstance()
-                                as? XmlStringAdapter<Any> ?: NoOpXmlStringAdapter()
-
-                        // Aplicando a personalização ao valor da propriedade
-                        val adaptedValue = adapter.adapt(value)
-
-                        // Adicionando a propriedade como um atributo XML
-                        xmlElement.addAttribute(propertyName, adaptedValue)
+//                        // Verificando se a propriedade está anotada com @XmlString para aplicar personalização
+//                        val stringAdapterAnnotation = prop.findAnnotation<XmlString>()
+//                        val adapter = stringAdapterAnnotation?.value?.java?.newInstance()
+//                                as? XmlStringAdapter<Any> ?: NoOpXmlStringAdapter()
+//
+//                        // Aplicando a personalização ao valor da propriedade
+//                        val adaptedValue = adapter.adapt(value)
+//
+//                        // Adicionando a propriedade como um atributo XML
+//                        xmlElement.addAttribute(propertyName, adaptedValue)
                     }
                 }
             }
@@ -94,3 +94,4 @@ fun Any.toXML(): XMLElement {
 
     return xmlElement
 }
+

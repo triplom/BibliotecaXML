@@ -1,3 +1,5 @@
+import FUC_Exemplos.ComponenteAvaliacao
+import FUC_Exemplos.FUC
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -69,7 +71,7 @@ class XMLDocumentTest {
         child3.addChild(child4)
 
         val expectedAncestryNames = mutableListOf<XMLElement>(root, child1, child3)
-       // val actualAncestryNames = child4.findAncestry().map { it.name }
+        // val actualAncestryNames = child4.findAncestry().map { it.name }
 
         //assertIterableEquals(expectedAncestryNames, actualAncestryNames)
         assertEquals(/* expected = */ expectedAncestryNames,/* actual = */ child4.findAncestry())
@@ -106,15 +108,6 @@ class XMLDocumentTest {
         document.addAttributesGlobal("child", "AnotherTest", "World")
         assertEquals("World", document.rootElement?.children?.first()?.attributes?.find { it.name == "AnotherTest" }?.value)
     }
-
-//    @Test
-//    fun `test rename attribute globally`() {
-//        val child = document.rootElement?.children?.first()
-//        child?.addAttribute("OldName", "Value")
-//        document.renameAttributesGlobal("child", "OldName", "NewName")
-//        assertEquals("Value", child?.attributes?.find { it.name == "NewName" }?.value)
-//        assertNull(child?.attributes?.find { it.name == "OldName" })
-//    }
 
     @Test
     fun `test rename entity globally`() {
@@ -202,35 +195,6 @@ class XMLElementTest {
 
 // Testes para a funcionalidade de XPath e avaliação no documento XML
 class XMLTests {
-
-//    // Teste para avaliar a expressão XPath no documento XML
-//    @Test
-//    fun testXPathEvaluation() {
-//        // Criando um documento com um elemento raiz "root" e cinco elementos filhos "child1" a "child5"
-//        val document = source.XMLDocument()
-//        val root = XMLElement("root")
-//        val child = XMLElement("child")
-//        document.rootElement = root
-//        root.addChild(child)
-//        for (i in 1..5) {
-//            val secondLayerChild = XMLElement("child$i")
-//            child.addChild(secondLayerChild)
-//        }
-//
-//        // Avaliando a expressão XPath "root/child" no documento
-//        val evaluator = XPathEvaluator(document)
-//        val result = evaluator.evaluate("root/child")
-//
-//
-//        assertEquals("<child1/>\n<child2/>\n<child3/>\n<child4/>\n<child5/>\n", result)
-//
-//        val secondChild = child.children.first()
-//        secondChild.addAttribute("age","123")
-//        val resultwithAttributes = evaluator.evaluate("root/child")
-//        secondChild.addChild(XMLElement("neto"))
-//        assertEquals("<child1 age=\"123\">\n<neto/></child1><child2/>\n<child3/>\n<child4/>\n<child5/>\n", resultwithAttributes)
-//
-//    }
 
     // Teste para verificar a avaliação de XPath em um documento XML
     @Test
@@ -333,6 +297,42 @@ class XMLReflectionTest {
     }
 }
 
+class testComponentAvaliacao{
+
+    @Test
+    fun test_pretty_princt_component_avaliacao(){
+        val componentAvaliacaoExemplo = ComponenteAvaliacao("Trabalho Prático", 50)
+        val resultComponentAvaliacao = componentAvaliacaoExemplo.prettyPrint()
+
+        assertEquals("<componente Nome_elemento_avaliação=\"Trabalho Prático\" peso=\"50%\"/>", resultComponentAvaliacao)
+    }
+}
+
+class testFUC{
+
+    @Test
+    fun test_pretty_print_FUC(){
+        val componentAvaliacao1 = ComponenteAvaliacao("Quizes", 20)
+        val componentAvaliacao2 = ComponenteAvaliacao("Trabalho Entrega Intercalar", 30)
+        val componentAvaliacao3 = ComponenteAvaliacao("Trabalho Entrega Final", 50)
+
+        val fucTest = FUC("M123456", "Programação Avançada", 6.0, "Desenvolver APIs", mutableListOf(componentAvaliacao1, componentAvaliacao2, componentAvaliacao3))
+        val resultFUCTest = fucTest.prettyPrint()
+
+        assertEquals("<fuc codigo=\"M123456\">\n" +
+                "\t<nome>\"Programação Avançada\"</nome>\n" +
+                "\t<ects>\"6.0\"</ects>\n" +
+                "\t<avaliacao>\n" +
+                "\t\t<componente Nome_elemento_avaliação=\"Quizes\" peso=\"20%\"/>\n" +
+                "\t\t<componente Nome_elemento_avaliação=\"Trabalho Entrega Intercalar\" peso=\"30%\"/>\n" +
+                "\t\t<componente Nome_elemento_avaliação=\"Trabalho Entrega Final\" peso=\"50%\"/>\n" +
+                "\t</avaliacao>\n" +
+                "</fuc>",resultFUCTest)
+    }
+}
+
+// ## 27/05 ##
+
 // Testes added to Any.ToXML
 
 
@@ -345,7 +345,11 @@ class ToXMLTest {
 
         val xmlElement = person.toXML()
 
+
+        assertEquals("Person", XMLName.name)
+
         assertEquals("Person", XMLElement.name)
+
         assertTrue(xmlElement.hasAttribute("firstName"))
         assertTrue(xmlElement.hasAttribute("lastName"))
         assertTrue(xmlElement.hasAttribute("age"))
@@ -377,7 +381,11 @@ class ToXMLTest {
 
         val xmlElement = address.toXML()
 
+
+        assertEquals("Address", XMLElement.name)
+
         assertEquals("Address", xmlElement.name)
+
         assertTrue(xmlElement.hasAttribute("street"))
         assertTrue(xmlElement.hasAttribute("city"))
 
@@ -391,7 +399,15 @@ class ToXMLTest {
     }
 }
 
+class Person(s: String, s1: String, i: Int, s2: String, address: Address) {
 
+}
+
+class Address(s: String, s1: String) {
+
+}
+
+//  ## Added 27/05
 
 // Testes para verificar a funcionalidade das anotações XML
 class XMLAnnotationsTest {
@@ -402,6 +418,12 @@ class XMLAnnotationsTest {
         // Criando uma classe com anotações XML para teste
         @XMLName("Person")
         data class Person(
+
+            @XMLAttribute_Annotation("name")
+            val name: String,
+            @XMLAttribute_Annotation("age")
+            val age: Int,
+            @XMLElement_Annotation(isAttribute = true)
             @XMLAttribute("name")
             val name: String,
             @XMLAttribute("age")
@@ -425,7 +447,9 @@ class XMLAnnotationsTest {
         assertEquals(1, xmlElement.children.size)
         assertEquals("address", xmlElement.children[0].name)
         assertEquals("123 Main St, Springfield", xmlElement.children[0].text)
+
     }
 }
 
-
+    }
+}

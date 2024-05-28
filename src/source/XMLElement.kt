@@ -1,9 +1,16 @@
 package source
 
+import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.hasAnnotation
+
 // Classe para representar um elemento XML
+
+open class XMLElement(var name: String="") {
+
 class XMLElement(
     @XMLElement
     var name: String) {
+
     // Lista de atributos do elemento
     val attributes = mutableListOf<XMLAttribute>()
 
@@ -84,7 +91,7 @@ class XMLElement(
 //        return result.toString() // Retornando a string de saída
 //    }
 
-    fun prettyPrint(depth: Int = 0): String {
+    open fun prettyPrint(depth: Int = 0): String {
         val indent = "\t".repeat(depth) // Gerando a string de indentação baseada na profundidade
         val result = StringBuilder() // StringBuilder para construir a string de saída
 

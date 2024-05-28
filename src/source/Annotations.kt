@@ -3,6 +3,7 @@ package source
 import kotlin.reflect.KClass
 
 // Anotação para indicar uma classe que implementa a transformação a ser aplicada à string por padrão
+
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.PROPERTY)
 annotation class XMLString(val value: KClass<out XMLStringAdapter<*>>) {
@@ -13,6 +14,18 @@ annotation class XMLString(val value: KClass<out XMLStringAdapter<*>>) {
 
 // Anotação para indicar um atributo em XML
 @Target(AnnotationTarget.PROPERTY)
+
+annotation class XMLString()
+
+// Anotação para indicar um atributo em XML
+@Target(AnnotationTarget.PROPERTY)
+annotation class AttributeInXML()
+
+//// Anotação para associar um adaptador que realiza alterações na entidade XML após o mapeamento automático
+//@Retention(AnnotationRetention.RUNTIME)
+//@Target(AnnotationTarget.CLASS)
+//annotation class XMLAdapter(val value: KClass<out XMLAdapterBase>)
+=======
 @Retention(AnnotationRetention.RUNTIME)
 annotation class AttributeInXML()
 
@@ -31,6 +44,26 @@ annotation class XMLProperty(
 )
 
 // Anotação para ignorar o campo no XML
+
+@Target(AnnotationTarget.VALUE_PARAMETER)
+annotation class XMLIgnore
+
+// Anotação para marcar uma propriedade como um atributo XML
+@Target(AnnotationTarget.VALUE_PARAMETER)
+annotation class XMLAttribute_Annotation(val name: String = "", val value: String = "")
+
+// Anotação para marcar uma propriedade como um elemento XML
+@Target(AnnotationTarget.VALUE_PARAMETER)
+annotation class XMLElement_Annotation(val isAttribute: Boolean = false)
+
+// Anotação para adicionar porcentagem
+@Target(AnnotationTarget.VALUE_PARAMETER)
+annotation class XMLPercentage()
+
+// Annotation to change the name
+@Target(AnnotationTarget.CLASS, AnnotationTarget.VALUE_PARAMETER)
+annotation class XMLName(val name:String="")
+=======
 @Target(AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class XMLIgnore
@@ -52,3 +85,4 @@ annotation class XMLPercentage
 
 
 annotation class XMLName(val value: String)
+
