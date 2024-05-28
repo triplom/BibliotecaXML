@@ -1,10 +1,18 @@
 package source
 
 // Classe para representar um elemento XML
-open class XMLElement(
-    @XMLElement_Annotation
-    var name: String = "", val s: String) {
-    val text: Any? = null
+
+open class XMLElement(var name: String="") {
+
+class XMLElement(
+    @XMLElement
+    var name: String) {
+
+//open class XMLElement(
+//    @XMLElement_Annotation
+//    var name: String = "", val s: String) {
+//    val text: Any? = null
+
 
     // Lista de atributos do elemento
     val attributes = mutableListOf<XMLAttribute>()
