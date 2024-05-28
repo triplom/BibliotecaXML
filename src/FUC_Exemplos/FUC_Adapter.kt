@@ -1,11 +1,10 @@
 package FUC_Exemplos
 
 import source.*
-import java.awt.event.ComponentEvent
 import kotlin.reflect.full.*
+
 @XMLName("fuc")
 class FUC(
-<<<<<<< HEAD
     val codigo: String,
     val nome: String,
     val ects: Double,
@@ -35,7 +34,6 @@ class FUC(
         }
     }
 
-=======
     @XMLAttribute_Annotation val codigo: String,
     @XMLElement_Annotation val nome: String,
     @XMLElement_Annotation val ects: Double,
@@ -46,7 +44,6 @@ class FUC(
     val objectFUC = this::class
 
     val nameObject = objectFUC.findAnnotation<XMLName>()?.name.toString()
->>>>>>> Miguel
     override fun prettyPrint(depth: Int): String {
 
         val indent = "\t".repeat(depth) // Gerando a string de indentação baseada na profundidade
@@ -55,17 +52,13 @@ class FUC(
         // Adicionando a tag de abertura do elemento com seus atributos
         result.append("$indent<$nameObject")
 
-<<<<<<< HEAD
         objectFUC.primaryConstructor!!.parameters.forEach {
             if (it.hasAnnotation<XMLAttribute>()){
-=======
         objectFUC.primaryConstructor!!.parameters.forEach { parameter->
             if (parameter.hasAnnotation<XMLAttribute_Annotation>()){
                 val xmlNameAnnotation = parameter.name
                 val property = this::class.members.find { it.name == parameter.name }
                 val propertyValue = property?.call(this)
->>>>>>> Miguel
-
                 result.append(" ${xmlNameAnnotation}=\"${propertyValue}\"")
             }
         }

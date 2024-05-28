@@ -19,11 +19,11 @@ annotation class XMLString()
 @Target(AnnotationTarget.PROPERTY)
 annotation class AttributeInXML()
 
-//// Anotação para associar um adaptador que realiza alterações na entidade XML após o mapeamento automático
-//@Retention(AnnotationRetention.RUNTIME)
-//@Target(AnnotationTarget.CLASS)
-//annotation class XMLAdapter(val value: KClass<out XMLAdapterBase>)
-=======
+// Anotação para associar um adaptador que realiza alterações na entidade XML após o mapeamento automático
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.CLASS)
+annotation class XMLAdapter(val value: KClass<out XMLAdapterBase>)
+
 @Retention(AnnotationRetention.RUNTIME)
 annotation class AttributeInXML()
 
@@ -61,32 +61,29 @@ annotation class XMLPercentage()
 // Annotation to change the name
 @Target(AnnotationTarget.CLASS, AnnotationTarget.VALUE_PARAMETER)
 annotation class XMLName(val name:String="")
-=======
-@Target(AnnotationTarget.PROPERTY)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class XMLIgnore
 
-// Anotação para marcar uma propriedade como um atributo XML
-@Target(AnnotationTarget.PROPERTY)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class XMLAttribute(val name: String = "", val value: String = "")
+//@Target(AnnotationTarget.PROPERTY)
+//@Retention(AnnotationRetention.RUNTIME)
+//annotation class XMLIgnore
 
-// Anotação para marcar uma propriedade como um elemento XML
-@Target(AnnotationTarget.PROPERTY)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class XMLElement(val isAttribute: Boolean = false, val s: String)
+//// Anotação para marcar uma propriedade como um atributo XML
+//@Target(AnnotationTarget.PROPERTY)
+//@Retention(AnnotationRetention.RUNTIME)
+//annotation class XMLAttribute(val name: String = "", val value: String = "")
 
-// Anotação para adicionar porcentagem
-@Target(AnnotationTarget.PROPERTY)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class XMLPercentage
+//// Anotação para marcar uma propriedade como um elemento XML
+//@Target(AnnotationTarget.PROPERTY)
+//@Retention(AnnotationRetention.RUNTIME)
+//annotation class XMLElement(val isAttribute: String = false.toString(), val s: String)
 
+//// Anotação para adicionar porcentagem
+//@Target(AnnotationTarget.PROPERTY)
+//@Retention(AnnotationRetention.RUNTIME)
+//annotation class XMLPercentage
 
-annotation class XMLName(val value: String)
+//
+//annotation class XMLName(val value: String)
 
 //annotation class XMLName(val name:String="") {
 //    companion object {
 //        val name: Any? = null
-    }
-}
-
