@@ -19,6 +19,20 @@ open class XMLElement(var name: String="") {
         return attributes.any { it.name == attribute }
     }
 
+    fun getAttributeValue(name:String):String{
+        var attributeValue = ""
+        if (hasAttribute(name)){
+            attributes.forEach {
+                if (it.name == name){
+                    attributeValue = it.value
+                }
+            }
+        }else {
+            attributeValue = ""
+        }
+        return attributeValue
+    }
+
     // Método para adicionar um atributo ao elemento
     fun addAttribute(name: String, value: String) {
         attributes.add(XMLAttribute(name, value))
