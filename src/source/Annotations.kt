@@ -40,4 +40,4 @@ annotation class XMLPercentage()
 
 // Annotation to change the name
 @Target(AnnotationTarget.CLASS, AnnotationTarget.VALUE_PARAMETER)
-annotation class XMLName(val name:String="")
+annotation class XMLName(val name:String = "")

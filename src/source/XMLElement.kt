@@ -1,8 +1,5 @@
 package source
 
-import kotlin.reflect.full.findAnnotation
-import kotlin.reflect.full.hasAnnotation
-
 // Classe para representar um elemento XML
 open class XMLElement(var name: String="") {
     // Lista de atributos do elemento
@@ -27,6 +24,10 @@ open class XMLElement(var name: String="") {
     // Método para remover um atributo do elemento
     fun removeAttribute(name: String) {
         attributes.removeIf { it.name == name }
+    }
+
+    fun getAttributeValue(name: String): String? {
+        return attributes.find { it.name == name }?.value
     }
 
     // Método para adicionar um elemento filho

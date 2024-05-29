@@ -36,12 +36,15 @@ class FUCAdapter : XmlAdapterBase {
     }
 }*/
 
-// Função para converter um objeto em XML
-fun Any.toXML(): XMLElement {
-    val clazz = this::class
-
+//// Função para converter um objeto em XML
+//fun Any.toXML(): XMLElement {
+//    val clazz = this::class
+    fun Any.toXML(): XMLElement {
+        val clazz = this::class
+        val xmlName = clazz.annotations.find { it is XMLName } as? XMLName
+        val xmlElement = XMLElement(xmlName?.name ?: clazz.simpleName ?: "Unknown")
     // Obtendo o nome da classe para criar o elemento XML
-    val xmlElement = XMLElement(clazz.simpleName ?: "unknown")
+      //  val xmlElement = XMLElement(clazz.simpleName ?: "unknown")
 
     // Itera sobre as propriedades da classe do objeto
     clazz.declaredMemberProperties.forEach { prop ->
