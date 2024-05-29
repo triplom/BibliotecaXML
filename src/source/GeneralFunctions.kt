@@ -67,7 +67,7 @@ fun Any.toXML(): XMLElement {
                         // Verificando se o valor da propriedade é um objeto
                         if (value.isNotEmpty()) {
                             // Convertendo recursivamente o objeto em XML e adicionando-o como entidade
-                            val childElement = (prop.call(this) as? Any)?.toXML()
+                            val childElement = prop.call(this)?.toXML()
                             if (childElement != null)
                                 xmlElement.addChild(childElement)
                         }
