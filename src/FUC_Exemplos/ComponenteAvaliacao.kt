@@ -1,7 +1,11 @@
 package FUC_Exemplos
 
-import source.*
-import kotlin.reflect.full.*
+import source.XMLElement
+import source.XMLName
+import source.XMLPercentage
+import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.full.primaryConstructor
 
 @XMLName("componente")
 class ComponenteAvaliacao(
@@ -12,10 +16,10 @@ class ComponenteAvaliacao(
         val objComponent = this::class
         objComponent.primaryConstructor!!.parameters.forEach { parameter ->
             val xmlNameAnnotation = if (parameter.hasAnnotation<XMLName>()) {
-                                        parameter.findAnnotation<XMLName>()?.name.toString()
-                                     } else {
-                                        parameter.name.toString()
-                                     }
+                parameter.findAnnotation<XMLName>()?.name.toString()
+            } else {
+                parameter.name.toString()
+            }
 
             val property = this::class.members.find { it.name == parameter.name }
             val propertyValue = property?.call(this)

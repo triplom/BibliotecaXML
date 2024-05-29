@@ -1,7 +1,5 @@
 package source
 
-import java.io.File
-
 // Classe representando um documento XML
 class XMLDocument {
 

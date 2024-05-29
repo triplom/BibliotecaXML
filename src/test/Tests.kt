@@ -1,8 +1,14 @@
+
 import FUC_Exemplos.ComponenteAvaliacao
 import FUC_Exemplos.FUC
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.*
 import source.*
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import source.XMLDocument
+import source.XMLElement
+import source.XPathEvaluator
 import kotlin.reflect.full.declaredMemberProperties
 
 // Testes para a funcionalidade da classe XMLDocument
@@ -352,7 +358,7 @@ data class Address(
 
 class ToXMLTest {
 
-    @Test
+  @Test
     fun testPersonToXML() {
         val address = Address("123 Main St", "Springfield")
         val person =  Person("John", "Doe", 30, "secret", address)
@@ -378,13 +384,10 @@ class ToXMLTest {
         assertEquals("30", ageAttr?.value)
 
         assertEquals(0, xmlElement.children.size)
+
     }
 
-    @Test
-    fun testAddressToXML() {
-        val address = Address("123 Main St", "Springfield")
-
-        val xmlElement = address.toXML()
+    class Person(s: String, s1: String, i: Int, s2: String, address: Address) {
 
         assertEquals("Address", xmlElement.name)
         assertTrue(xmlElement.hasAttribute("street"))
@@ -426,7 +429,7 @@ class ToXMLTest {
             assertEquals("Person", xmlElement.name)
             assertTrue(xmlElement.hasAttribute("name"))
             assertEquals("John", xmlElement.getAttributeValue("name"))
-            /**/
+
             assertTrue(xmlElement.hasAttribute("age"))
             assertEquals("30", xmlElement.getAttributeValue("age"))
             assertEquals(0, xmlElement.children.size)
@@ -434,4 +437,5 @@ class ToXMLTest {
             assertEquals("123 Main St, Springfield", xmlElement.attributes[0].value)
         }
     }
+
 }

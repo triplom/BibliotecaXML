@@ -1,7 +1,5 @@
 package source
 
-import kotlin.reflect.KClass
-
 // Anotação para indicar uma classe que implementa a transformação a ser aplicada à string por padrão
 
 @Target(AnnotationTarget.PROPERTY)

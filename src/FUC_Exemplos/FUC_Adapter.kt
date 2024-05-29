@@ -1,8 +1,10 @@
 package FUC_Exemplos
 
 import source.*
-import java.awt.event.ComponentEvent
-import kotlin.reflect.full.*
+import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.full.primaryConstructor
+
 @XMLName("fuc")
 class FUC(
     @XMLAttribute_Annotation val codigo: String,
