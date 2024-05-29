@@ -1,8 +1,7 @@
 package source
 
 
-class XPathEvaluator(
-    private val document: XMLDocument) {
+class XPathEvaluator(private val document: XMLDocument) {
     // Método para avaliar uma expressão XPath e retornar uma lista de elementos correspondentes
 
     fun evaluate(expression: String): List<XMLElement> {
