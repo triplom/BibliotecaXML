@@ -387,21 +387,6 @@ class ToXMLTest {
 
     }
 
-    class Person(s: String, s1: String, i: Int, s2: String, address: Address) {
-
-        assertEquals("Address", xmlElement.name)
-        assertTrue(xmlElement.hasAttribute("street"))
-        assertTrue(xmlElement.hasAttribute("city"))
-
-        val streetAttr = xmlElement.attributes.find { it.name == "street" }
-        assertNotNull(streetAttr)
-        assertEquals("123 Main St", streetAttr?.value)
-
-        val cityAttr = xmlElement.attributes.find { it.name == "city" }
-        assertNotNull(cityAttr)
-        assertEquals("Springfield", cityAttr?.value)
-    }
-
     @Nested
     inner class XMLAnnotationsTest2 {
 
