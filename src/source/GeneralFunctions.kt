@@ -29,19 +29,19 @@ class AddPercentageXmlStringAdapter : XmlStringAdapter<Int> {
 }
 
 // Implementação do adaptador de personalização pós-mapeamento para a classe FUC
-
+/*
 class FUCAdapter : XmlAdapterBase {
     override fun adapt(element: XMLElement) {
         // Implemente as alterações necessárias na entidade XML após o mapeamento automático para a classe FUC
     }
-}
+}*/
 
 // Função para converter um objeto em XML
 fun Any.toXML(): XMLElement {
     val clazz = this::class
 
     // Obtendo o nome da classe para criar o elemento XML
-    val xmlElement = XMLElement(clazz.simpleName ?: "unknown", "root")
+    val xmlElement = XMLElement(clazz.simpleName ?: "unknown")
 
     // Itera sobre as propriedades da classe do objeto
     clazz.declaredMemberProperties.forEach { prop ->
@@ -56,16 +56,13 @@ fun Any.toXML(): XMLElement {
             val propertyName = annotation.name
 
             // Verificando se a propriedade deve ser ignorada
-            if (!annotation.ignore)
-                // Verificando o tipo de tradução (atributo, entidade ou objeto)
-            {
+            if (!annotation.ignore) {
                 // Verificando o tipo de tradução (atributo, entidade ou objeto)
                 when (annotation.type) {
                     XMLType.ATTRIBUTE -> {
                         // Se a propriedade estiver anotada como um atributo XML, adiciona-a como atributo
                         xmlElement.addAttribute(propertyName, value)
                     }
-
                     XMLType.ENTITY -> {
                         // Verificando se o valor da propriedade é um objeto
                         if (value.isNotEmpty()) {
@@ -75,18 +72,17 @@ fun Any.toXML(): XMLElement {
                                 xmlElement.addChild(childElement)
                         }
                     }
-
                     XMLType.OBJECT -> {
-                        // Verificando se a propriedade está anotada com @XmlString para aplicar personalização
-                        val stringAdapterAnnotation = prop.findAnnotation<XmlString>()
-                        val adapter = stringAdapterAnnotation?.value?.java?.newInstance()
-                                as? XmlStringAdapter<Any> ?: NoOpXmlStringAdapter()
-
-                        // Aplicando a personalização ao valor da propriedade
-                        val adaptedValue = adapter.adapt(value)
-
-                        // Adicionando a propriedade como um atributo XML
-                        xmlElement.addAttribute(propertyName, adaptedValue)
+//                        // Verificando se a propriedade está anotada com @XmlString para aplicar personalização
+//                        val stringAdapterAnnotation = prop.findAnnotation<XmlString>()
+//                        val adapter = stringAdapterAnnotation?.value?.java?.newInstance()
+//                                as? XmlStringAdapter<Any> ?: NoOpXmlStringAdapter()
+//
+//                        // Aplicando a personalização ao valor da propriedade
+//                        val adaptedValue = adapter.adapt(value)
+//
+//                        // Adicionando a propriedade como um atributo XML
+//                        xmlElement.addAttribute(propertyName, adaptedValue)
                     }
                 }
             }
