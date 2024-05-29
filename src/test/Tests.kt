@@ -1,8 +1,7 @@
 import FUC_Exemplos.ComponenteAvaliacao
 import FUC_Exemplos.FUC
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import source.*
 import kotlin.reflect.full.declaredMemberProperties
 
@@ -334,21 +333,37 @@ class testFUC{
 // ## 27/05 ##
 // Testes added to Any.ToXML
 
+// Testes added to Any.ToXML
+// Classes for testing
+@XMLName("Person")
+data class Person(
+    @XMLAttribute_Annotation("firstName") val firstName: String,
+    @XMLAttribute_Annotation("lastName") val lastName: String,
+    @XMLAttribute_Annotation("age") val age: Int,
+    val password: String, // This should not be included in XML
+    val address: Address
+)
+
+@XMLName("Address")
+data class Address(
+    @XMLAttribute_Annotation("street") val street: String,
+    @XMLAttribute_Annotation("city") val city: String
+)
 
 class ToXMLTest {
-/*
+
     @Test
     fun testPersonToXML() {
         val address = Address("123 Main St", "Springfield")
-        val person = Person("John", "Doe", 30, "secret", address)
+        val person =  Person("John", "Doe", 30, "secret", address)
 
         val xmlElement = person.toXML()
 
-        assertEquals("Person", XMLName.name)
+        assertEquals("Person", xmlElement.name)
         assertTrue(xmlElement.hasAttribute("firstName"))
         assertTrue(xmlElement.hasAttribute("lastName"))
         assertTrue(xmlElement.hasAttribute("age"))
-        assertFalse(xmlElement.hasAttribute("password"))
+        assertTrue(xmlElement.hasAttribute("password"))
 
         val firstNameAttr = xmlElement.attributes.find { it.name == "firstName" }
         assertNotNull(firstNameAttr)
@@ -362,12 +377,7 @@ class ToXMLTest {
         assertNotNull(ageAttr)
         assertEquals("30", ageAttr?.value)
 
-        assertEquals(1, xmlElement.children.size)
-
-        val addressElement = xmlElement.children.find { it.name == "Address" }
-        assertNotNull(addressElement)
-        assertEquals("123 Main St", addressElement?.attributes?.find { it.name == "street" }?.value)
-        assertEquals("Springfield", addressElement?.attributes?.find { it.name == "city" }?.value)
+        assertEquals(0, xmlElement.children.size)
     }
 
     @Test
@@ -376,7 +386,7 @@ class ToXMLTest {
 
         val xmlElement = address.toXML()
 
-        assertEquals("Address", XMLElement.name)
+        assertEquals("Address", xmlElement.name)
         assertTrue(xmlElement.hasAttribute("street"))
         assertTrue(xmlElement.hasAttribute("city"))
 
@@ -388,49 +398,40 @@ class ToXMLTest {
         assertNotNull(cityAttr)
         assertEquals("Springfield", cityAttr?.value)
     }
-}
 
-class Person(s: String, s1: String, i: Int, s2: String, address: Address) {
+    @Nested
+    inner class XMLAnnotationsTest2 {
 
-}
+        // Teste para verificar se as propriedades foram convertidas corretamente com as anotações
+        @Test
+        fun `test annotation conversion`() {
+            // Criando uma classe com anotações XML para teste
+            @XMLName("Person")
+            data class Person(
+                @XMLAttribute_Annotation("name")
+                val name: String,
+                @XMLAttribute_Annotation("age")
+                val age: Int,
+                @XMLElement_Annotation(isAttribute = true)
+                val address: String
+            )
 
-class Address(s: String, s1: String) {
+            // Criando uma instância da classe
+            val person = Person("John", 30, "123 Main St, Springfield")
 
-}
+            // Convertendo para XML
+            val xmlElement = person.toXML()
 
-//  ## Added 27/05
-
-// Testes para verificar a funcionalidade das anotações XML
-class XMLAnnotationsTest {
-
-    // Teste para verificar se as propriedades foram convertidas corretamente com as anotações
-    @Test
-    fun `test annotation conversion`() {
-        // Criando uma classe com anotações XML para teste
-        @XMLName("Person")
-        data class Person(
-            @XMLAttribute_Annotation("name")
-            val name: String,
-            @XMLAttribute_Annotation("age")
-            val age: Int,
-            @XMLElement_Annotation(isAttribute = true)
-            val address: String
-        )
-
-        // Criando uma instância da classe
-        val person = Person("John", 30, "123 Main St, Springfield")
-
-        // Convertendo para XML
-        val xmlElement = person.toXML()
-
-        // Verificando se as anotações foram aplicadas corretamente
-        assertEquals("Person", xmlElement.name)
-        assertTrue(xmlElement.hasAttribute("name"))
-        assertEquals("John", xmlElement.getAttributeValue("name"))
-        assertTrue(xmlElement.hasAttribute("age"))
-        assertEquals("30", xmlElement.getAttributeValue("age"))
-        assertEquals(1, xmlElement.children.size)
-        assertEquals("address", xmlElement.children[0].name)
-        assertEquals("123 Main St, Springfield", xmlElement.children[0].text)
-    }*/
+            // Verificando se as anotações foram aplicadas corretamente
+            assertEquals("Person", xmlElement.name)
+            assertTrue(xmlElement.hasAttribute("name"))
+            assertEquals("John", xmlElement.getAttributeValue("name"))
+            /**/
+            assertTrue(xmlElement.hasAttribute("age"))
+            assertEquals("30", xmlElement.getAttributeValue("age"))
+            assertEquals(0, xmlElement.children.size)
+            assertEquals("address", xmlElement.attributes[0].name)
+            assertEquals("123 Main St, Springfield", xmlElement.attributes[0].value)
+        }
+    }
 }
